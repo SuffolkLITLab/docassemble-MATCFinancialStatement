@@ -1,0 +1,174 @@
+---
+modules:
+  - docassemble.base.util
+---
+metadata:
+  title: |
+    Financial Statement Schedule B
+  short title: |
+    Schedule B
+  description: |
+    Schedule B questions for rental income and rental expenses.
+  LIST_topics:
+    - Family law
+    - Financial disclosure
+  jurisdiction: NAM-US-US+MA
+  landing_page_url: https://courtformsonline.org/
+  authors:
+    - Court Forms Online
+---
+variable name: schedule_b_expense_choices
+data:
+  - [advertising, "Advertising"]
+  - [motor_vehicle_travel, "Motor vehicle and travel"]
+  - [insurance, "Insurance"]
+  - [cleaning_maintenance, "Cleaning and maintenance"]
+  - [commissions, "Commissions"]
+  - [mortgage_interest, "Interest on mortgage to banks"]
+  - [other_interest, "Other interest"]
+  - [legal_professional, "Legal and professional services"]
+  - [repairs, "Repairs"]
+  - [supplies, "Supplies"]
+  - [taxes, "Taxes"]
+  - [utilities, "Utilities"]
+  - [wages, "Wages"]
+  - [other, "Other expenses"]
+---
+id: schedule_b_sections
+sets:
+  - schedule_b_sections
+code: |
+  schedule_b_intro
+  schedule_b_rent_received
+  schedule_b_expenses_list
+  schedule_b_expenses.gather()
+  schedule_b_expense_totals
+  schedule_b_weekly_income
+  schedule_b_sections = True
+---
+id: schedule_b_intro
+continue button field: schedule_b_intro
+question: |
+  Schedule B: rental income
+subquestion: |
+  You indicated that you have rental income.
+  This schedule asks for rental income and rental expenses.
+---
+id: schedule_b_rent_received
+sets:
+  - schedule_b_rent_received
+continue button field: schedule_b_rent_received
+question: |
+  Annual rent
+subquestion: |
+  Enter the total rent you get in a typical year before expenses.
+fields:
+  - Annual rent: schedule_b_annual_rent_received
+    datatype: currency
+    required: False
+    help: |
+      Enter the total rent you get in a typical year before expenses.
+---
+id: schedule_b_expenses_list
+sets:
+  - schedule_b_expenses_list
+continue button field: schedule_b_expenses_list
+question: |
+  Annual rental expenses
+subquestion: |
+  Add each expense line item and its annual amount. If you are not sure,
+  give your best estimate.
+fields:
+  - Do you have rental expenses to list?: schedule_b_expenses.there_are_any
+    datatype: yesno
+---
+id: schedule_b_expense_item
+generic object: schedule_b_expenses
+question: |
+  Rental expense
+subquestion: |
+  Enter the annual amount for this category.
+fields:
+  - Expense category: schedule_b_expenses[i].source
+    code: |
+      schedule_b_expense_choices
+  - Expense description (if needed): schedule_b_expenses[i].description
+    required: False
+  - Annual amount: schedule_b_expenses[i].value
+    datatype: currency
+    required: False
+    help: |
+      Enter the total amount you pay in a typical year for this category.
+---
+code: |
+  schedule_b_expenses[i].times_per_year = 1
+  schedule_b_expenses[i].display_name = dict(schedule_b_expense_choices).get(
+    schedule_b_expenses[i].source, schedule_b_expenses[i].source
+  )
+  schedule_b_expenses[i].complete = True
+---
+code: |
+  if defined("schedule_b_expenses.there_are_any"):
+    if schedule_b_expenses.there_are_any:
+      for expense in schedule_b_expenses.elements:
+        expense.value
+    schedule_b_expenses.revisit = True
+---
+table: schedule_b_expenses.table
+rows: schedule_b_expenses
+columns:
+  - Expense: |
+      row_item.display_name if hasattr(row_item, "display_name") else row_item.source
+  - Annual amount: |
+      currency(row_item.total(times_per_year=1))
+edit:
+  - source
+  - description
+  - value
+---
+id: schedule_b_expenses_revisit
+continue button field: schedule_b_expenses.revisit
+question: |
+  Edit rental expenses
+subquestion: |
+  % if defined("schedule_b_expenses.there_are_any") and schedule_b_expenses.there_are_any and len(schedule_b_expenses):
+  ${ schedule_b_expenses.table }
+  % else:
+  You have not added any rental expenses yet.
+  % endif
+
+  Use "Add another" if you need to add an expense now.
+
+  ${ schedule_b_expenses.add_action() }
+---
+id: schedule_b_expenses_more
+question: |
+  Do you have another rental expense to add?
+subquestion: |
+  Check this box only if you have another rental expense to add.
+fields:
+  - Do you have another rental expense to add?: schedule_b_expenses.there_is_another
+    datatype: yesno
+---
+code: |
+  schedule_b_total_annual_expenses = float(schedule_b_expenses.total(times_per_year=1))
+---
+id: schedule_b_expense_totals
+continue button field: schedule_b_expense_totals
+question: |
+  Annual expense total
+subquestion: |
+  ${ currency(schedule_b_total_annual_expenses) }
+---
+code: |
+  schedule_b_weekly_rental_income = (
+    (float(value("schedule_b_annual_rent_received") or 0) - schedule_b_total_annual_expenses) / 52
+  )
+---
+id: schedule_b_weekly_income
+continue button field: schedule_b_weekly_income
+question: |
+  Weekly rental income
+subquestion: |
+  Weekly rental income = (annual rent - annual expenses) divided by 52
+  ${ currency(schedule_b_weekly_rental_income) }
