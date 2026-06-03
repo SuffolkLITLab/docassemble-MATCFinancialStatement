@@ -5,7 +5,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "docassemble.MAFinancialStatement"
+name = "docassemble.MATCFinancialStatement"
 version = "1.48"
 description = "A docassemble interview for Massachusetts financial statement forms."
 readme = "README.md"

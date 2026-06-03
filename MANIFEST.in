@@ -1,5 +1,5 @@
 include README.md
-graft docassemble/MAFinancialStatement/data
+graft docassemble/MATCFinancialStatement/data
 recursive-exclude * *.egg-info
 recursive-exclude .git *
 recursive-exclude venv *

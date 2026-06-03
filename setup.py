@@ -41,7 +41,7 @@ def find_package_data(where=".", package="", exclude=standard_exclude, exclude_d
 
 
 setup(
-    name="docassemble.MAFinancialStatement",
+    name="docassemble.MATCFinancialStatement",
     version="1.48",
     description="A docassemble interview for Massachusetts financial statement forms.",
     long_description=open("README.md", encoding="utf-8").read(),
@@ -59,7 +59,7 @@ setup(
     ],
     zip_safe=False,
     package_data=find_package_data(
-        where="docassemble/MAFinancialStatement/",
-        package="docassemble.MAFinancialStatement",
+        where="docassemble/MATCFinancialStatement/",
+        package="docassemble.MATCFinancialStatement",
     ),
 )

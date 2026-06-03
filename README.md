@@ -11,4 +11,4 @@ The interview can prepare:
 
 The main interview file is:
 
-`docassemble.MAFinancialStatement:data/questions/financial_statement.yml`
+`docassemble.MATCFinancialStatement:data/questions/financial_statement.yml`
