@@ -7,6 +7,7 @@ include:
   - docassemble.ALMassachusetts:al_massachusetts.yml
   - docassemble.MassAccess:massaccess.yml
   - docassemble.ALToolbox:al_income.yml
+  - ma1a_portable_schema.yml
   - financial_statement_shared.yml
   - financial_statement_short.yml
   - financial_statement_long.yml
@@ -68,6 +69,7 @@ code: |
   ]
 ---
 objects:
+  - petitioners: ALPeopleList.using(ask_number=False, target_number=2)
   - users: ALPeopleList.using(target_number=1)
   - other_parties: ALPeopleList.using(target_number=1)
   - trial_court: MACourt
@@ -97,6 +99,7 @@ code: |
 id: interview_order_financial_statement
 code: |
   nav.set_sections(al_nav_sections)
+  ma1a_apply_portable_schema
   nav.set_section("introduction")
   set_progress(5)
   fs_intro
@@ -155,6 +158,7 @@ code: |
 
   nav.set_section("download")
   set_progress(100)
+  ma1a_export_portable_schema
   fs_download
 
   interview_order_financial_statement = True
