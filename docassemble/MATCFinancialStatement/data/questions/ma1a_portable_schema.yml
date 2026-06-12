@@ -1,0 +1,134 @@
+---
+comment: |
+  Adapter between the package-level MA 1A / Portable schema and the
+  standalone financial-statement interview.
+
+  The shared 1A package uses petitioners[0] and petitioners[1]. This
+  standalone interview keeps users[0] for the person completing the financial
+  statement and other_parties[0] for the other spouse/party.
+
+  Do not map financial-statement children to children_of_marriage. Financial
+  statements can include household/dependent child facts that do not belong on
+  the petition or separation agreement.
+---
+code: |
+  if defined("petitioners[0].name.first") and not defined("users[0].name.first"):
+    users[0].name.first = petitioners[0].name.first
+  if defined("petitioners[0].name.middle") and not defined("users[0].name.middle"):
+    users[0].name.middle = petitioners[0].name.middle
+  if defined("petitioners[0].name.last") and not defined("users[0].name.last"):
+    users[0].name.last = petitioners[0].name.last
+  if defined("petitioners[0].name.suffix") and not defined("users[0].name.suffix"):
+    users[0].name.suffix = petitioners[0].name.suffix
+  if defined("petitioners[0].address.address") and not defined("users[0].address.address"):
+    users[0].address.address = petitioners[0].address.address
+  if defined("petitioners[0].address.unit") and not defined("users[0].address.unit"):
+    users[0].address.unit = petitioners[0].address.unit
+  if defined("petitioners[0].address.city") and not defined("users[0].address.city"):
+    users[0].address.city = petitioners[0].address.city
+  if defined("petitioners[0].address.state") and not defined("users[0].address.state"):
+    users[0].address.state = petitioners[0].address.state
+  if defined("petitioners[0].address.zip") and not defined("users[0].address.zip"):
+    users[0].address.zip = petitioners[0].address.zip
+  if defined("petitioners[0].phone_number") and not defined("users[0].phone_number"):
+    users[0].phone_number = petitioners[0].phone_number
+  if defined("petitioners[0].email") and not defined("users[0].email"):
+    users[0].email = petitioners[0].email
+  if defined("petitioners[0].birthdate") and not defined("users[0].birthdate"):
+    users[0].birthdate = petitioners[0].birthdate
+
+  if defined("petitioners[1].name.first") and not defined("other_parties[0].name.first"):
+    other_parties[0].name.first = petitioners[1].name.first
+  if defined("petitioners[1].name.middle") and not defined("other_parties[0].name.middle"):
+    other_parties[0].name.middle = petitioners[1].name.middle
+  if defined("petitioners[1].name.last") and not defined("other_parties[0].name.last"):
+    other_parties[0].name.last = petitioners[1].name.last
+  if defined("petitioners[1].name.suffix") and not defined("other_parties[0].name.suffix"):
+    other_parties[0].name.suffix = petitioners[1].name.suffix
+  if defined("petitioners[1].address.address") and not defined("other_parties[0].address.address"):
+    other_parties[0].address.address = petitioners[1].address.address
+  if defined("petitioners[1].address.unit") and not defined("other_parties[0].address.unit"):
+    other_parties[0].address.unit = petitioners[1].address.unit
+  if defined("petitioners[1].address.city") and not defined("other_parties[0].address.city"):
+    other_parties[0].address.city = petitioners[1].address.city
+  if defined("petitioners[1].address.state") and not defined("other_parties[0].address.state"):
+    other_parties[0].address.state = petitioners[1].address.state
+  if defined("petitioners[1].address.zip") and not defined("other_parties[0].address.zip"):
+    other_parties[0].address.zip = petitioners[1].address.zip
+  if defined("petitioners[1].phone_number") and not defined("other_parties[0].phone_number"):
+    other_parties[0].phone_number = petitioners[1].phone_number
+  if defined("petitioners[1].email") and not defined("other_parties[0].email"):
+    other_parties[0].email = petitioners[1].email
+
+  if defined("trial_court.division") and not defined("financial_statement_court_division"):
+    financial_statement_court_division = trial_court.division
+  if defined("financial_statement_court_division") and not defined("trial_court.division"):
+    trial_court.division = financial_statement_court_division
+
+  if defined("financial_user_has_children") and not defined("user_has_children"):
+    user_has_children = financial_user_has_children
+  if defined("financial_children_living_with_user_count") and not defined("children_living_with_user_count"):
+    children_living_with_user_count = financial_children_living_with_user_count
+
+  ma1a_apply_portable_schema = True
+---
+code: |
+  if defined("users[0].name.first") and not defined("petitioners[0].name.first"):
+    petitioners[0].name.first = users[0].name.first
+  if defined("users[0].name.middle") and not defined("petitioners[0].name.middle"):
+    petitioners[0].name.middle = users[0].name.middle
+  if defined("users[0].name.last") and not defined("petitioners[0].name.last"):
+    petitioners[0].name.last = users[0].name.last
+  if defined("users[0].name.suffix") and not defined("petitioners[0].name.suffix"):
+    petitioners[0].name.suffix = users[0].name.suffix
+  if defined("users[0].address.address") and not defined("petitioners[0].address.address"):
+    petitioners[0].address.address = users[0].address.address
+  if defined("users[0].address.unit") and not defined("petitioners[0].address.unit"):
+    petitioners[0].address.unit = users[0].address.unit
+  if defined("users[0].address.city") and not defined("petitioners[0].address.city"):
+    petitioners[0].address.city = users[0].address.city
+  if defined("users[0].address.state") and not defined("petitioners[0].address.state"):
+    petitioners[0].address.state = users[0].address.state
+  if defined("users[0].address.zip") and not defined("petitioners[0].address.zip"):
+    petitioners[0].address.zip = users[0].address.zip
+  if defined("users[0].phone_number") and not defined("petitioners[0].phone_number"):
+    petitioners[0].phone_number = users[0].phone_number
+  if defined("users[0].email") and not defined("petitioners[0].email"):
+    petitioners[0].email = users[0].email
+  if defined("users[0].birthdate") and not defined("petitioners[0].birthdate"):
+    petitioners[0].birthdate = users[0].birthdate
+
+  if defined("other_parties[0].name.first") and not defined("petitioners[1].name.first"):
+    petitioners[1].name.first = other_parties[0].name.first
+  if defined("other_parties[0].name.middle") and not defined("petitioners[1].name.middle"):
+    petitioners[1].name.middle = other_parties[0].name.middle
+  if defined("other_parties[0].name.last") and not defined("petitioners[1].name.last"):
+    petitioners[1].name.last = other_parties[0].name.last
+  if defined("other_parties[0].name.suffix") and not defined("petitioners[1].name.suffix"):
+    petitioners[1].name.suffix = other_parties[0].name.suffix
+  if defined("other_parties[0].address.address") and not defined("petitioners[1].address.address"):
+    petitioners[1].address.address = other_parties[0].address.address
+  if defined("other_parties[0].address.unit") and not defined("petitioners[1].address.unit"):
+    petitioners[1].address.unit = other_parties[0].address.unit
+  if defined("other_parties[0].address.city") and not defined("petitioners[1].address.city"):
+    petitioners[1].address.city = other_parties[0].address.city
+  if defined("other_parties[0].address.state") and not defined("petitioners[1].address.state"):
+    petitioners[1].address.state = other_parties[0].address.state
+  if defined("other_parties[0].address.zip") and not defined("petitioners[1].address.zip"):
+    petitioners[1].address.zip = other_parties[0].address.zip
+  if defined("other_parties[0].phone_number") and not defined("petitioners[1].phone_number"):
+    petitioners[1].phone_number = other_parties[0].phone_number
+  if defined("other_parties[0].email") and not defined("petitioners[1].email"):
+    petitioners[1].email = other_parties[0].email
+
+  if defined("financial_statement_court_division") and not defined("trial_court.division"):
+    trial_court.division = financial_statement_court_division
+  if defined("trial_court.division") and not defined("financial_statement_court_division"):
+    financial_statement_court_division = trial_court.division
+
+  if defined("user_has_children") and not defined("financial_user_has_children"):
+    financial_user_has_children = user_has_children
+  if defined("children_living_with_user_count") and not defined("financial_children_living_with_user_count"):
+    financial_children_living_with_user_count = children_living_with_user_count
+
+  ma1a_export_portable_schema = True
