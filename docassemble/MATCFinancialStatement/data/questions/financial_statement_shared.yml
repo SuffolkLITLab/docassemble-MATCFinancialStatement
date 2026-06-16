@@ -563,10 +563,10 @@ subquestion: |
   If you do not know the other party's information yet, you can leave those
   fields blank for now.
 fields:
-  - Your first name: users[0].name.first
-  - Your last name: users[0].name.last
-  - Other party first name: other_parties[0].name.first
-  - Other party last name: other_parties[0].name.last
+  - Your first name: fs_user.name.first
+  - Your last name: fs_user.name.last
+  - Other party first name: fs_other_user.name.first
+  - Other party last name: fs_other_user.name.last
 ---
 id: user_personal_info
 sets:
@@ -584,7 +584,7 @@ fields:
     maxlength: 4
     help: |
       Optional. Enter only the last 4 digits (example: 1234).
-  - Date of birth: users[0].birthdate
+  - Date of birth: fs_user.birthdate
     datatype: date
     help: |
       Use month/day/year format.
@@ -615,18 +615,18 @@ subquestion: |
   Email and phone are optional, but it helps to include the best contact
   information you use regularly.
 fields:
-  - Phone number: users[0].phone_number
+  - Phone number: fs_user.phone_number
     required: False
     help: |
       Use a number where you can receive calls or texts. We will format a
       10-digit number as XXX-XXX-XXXX.
-  - Email address: users[0].email
+  - Email address: fs_user.email
     required: False
     help: |
       Use an email you check regularly.
 validation code: |
-  if users[0].phone_number:
-    users[0].phone_number = fs_normalize_phone(users[0].phone_number)
+  if fs_user.phone_number:
+    fs_user.phone_number = fs_normalize_phone(fs_user.phone_number)
 ---
 id: user_address
 sets:
@@ -638,12 +638,12 @@ subquestion: |
   If you receive mail somewhere else, enter the address where you want to get
   court mail.
 fields:
-  - Street address: users[0].address.address
+  - Street address: fs_user.address.address
     address autocomplete: True
-  - City/Town: users[0].address.city
-  - State: users[0].address.state
+  - City/Town: fs_user.address.city
+  - State: fs_user.address.state
     default: MA
-  - ZIP: users[0].address.zip
+  - ZIP: fs_user.address.zip
 ---
 id: user_employment
 sets:
@@ -1124,14 +1124,14 @@ review:
     button: |
       **Docket number**
       ${ docket_number if defined("docket_number") and docket_number else "Not provided" }
-  - Edit: users[0].name.first
+  - Edit: fs_user.name.first
     button: |
       **Your name**
-      ${ users[0] if defined("users[0].name.first") else "Not provided" }
-  - Edit: other_parties[0].name.first
+      ${ fs_user if defined("fs_user.name.first") else "Not provided" }
+  - Edit: fs_other_user.name.first
     button: |
       **Other party**
-      ${ other_parties[0] if defined("other_parties[0].name.first") else "Not provided" }
+      ${ fs_other_user if defined("fs_other_user.name.first") else "Not provided" }
 ---
 id: fs_checkpoint_court_and_parties
 continue button field: fs_checkpoint_court_and_parties
@@ -1152,18 +1152,18 @@ question: |
 subquestion: |
   Update anything in this section before you move on.
 review:
-  - Edit: users[0].birthdate
+  - Edit: fs_user.birthdate
     button: |
       **Birth date**
-      ${ users[0].birthdate if defined("users[0].birthdate") else "Not provided" }
-  - Edit: users[0].phone_number
+      ${ fs_user.birthdate if defined("fs_user.birthdate") else "Not provided" }
+  - Edit: fs_user.phone_number
     button: |
       **Phone**
-      ${ users[0].phone_number if defined("users[0].phone_number") and users[0].phone_number else "Not provided" }
-  - Edit: users[0].address.address
+      ${ fs_user.phone_number if defined("fs_user.phone_number") and fs_user.phone_number else "Not provided" }
+  - Edit: fs_user.address.address
     button: |
       **Address**
-      ${ users[0].address.on_one_line() if defined("users[0].address.address") else "Not provided" }
+      ${ fs_user.address.on_one_line() if defined("fs_user.address.address") else "Not provided" }
   - Edit: user_employer_name
     button: |
       **Employer**
@@ -1525,26 +1525,26 @@ review:
     button: |
       **Docket number**
       ${ docket_number if defined("docket_number") and docket_number else "Not provided" }
-  - Edit: users[0].name.first
+  - Edit: fs_user.name.first
     button: |
       **Your name**
-      ${ users[0] if defined("users[0].name.first") else "" }
-  - Edit: other_parties[0].name.first
+      ${ fs_user if defined("fs_user.name.first") else "" }
+  - Edit: fs_other_user.name.first
     button: |
       **Other party**
-      ${ other_parties[0] if defined("other_parties[0].name.first") else "Not provided" }
-  - Edit: users[0].birthdate
+      ${ fs_other_user if defined("fs_other_user.name.first") else "Not provided" }
+  - Edit: fs_user.birthdate
     button: |
       **Birth date**
-      ${ users[0].birthdate if defined("users[0].birthdate") else "Not provided" }
-  - Edit: users[0].phone_number
+      ${ fs_user.birthdate if defined("fs_user.birthdate") else "Not provided" }
+  - Edit: fs_user.phone_number
     button: |
       **Phone**
-      ${ users[0].phone_number if defined("users[0].phone_number") and users[0].phone_number else "Not provided" }
-  - Edit: users[0].address.address
+      ${ fs_user.phone_number if defined("fs_user.phone_number") and fs_user.phone_number else "Not provided" }
+  - Edit: fs_user.address.address
     button: |
       **Address**
-      ${ users[0].address.on_one_line() if defined("users[0].address.address") else "Not provided" }
+      ${ fs_user.address.on_one_line() if defined("fs_user.address.address") else "Not provided" }
   - Edit: financial_cadence_default
     button: |
       **Cadence**

@@ -25,6 +25,8 @@ code: |
   nav.set_section("introduction")
   set_progress(5)
   fs_intro
+  users[0].financial_statement_role
+  set_financial_statement_roles
 
   nav.set_section("eligibility")
   set_progress(15)
@@ -36,14 +38,14 @@ code: |
   financial_statement_court_division
   docket_number
   users[0].name.first
-  other_parties[0].name.first
+  users[1].name.first
   fs_checkpoint_court_and_parties
 
   nav.set_section("personal_information")
   set_progress(35)
-  users[0].birthdate
-  users[0].phone_number
-  users[0].address.address
+  fs_user.birthdate
+  fs_user.phone_number
+  fs_user.address.address
   user_employer_name
   if user_employer_name or user_job_title:
     user_employer_address_street
@@ -83,6 +85,35 @@ code: |
   fs_download
 
   interview_order_financial_statement = True
+---
+code: |
+  if users[0].financial_statement_role == "filer":
+    users[1].financial_statement_role = "other_spouse"
+  else:
+    users[1].financial_statement_role = "filer"
+  set_financial_statement_roles = True
+---
+code: |
+  fs_user = financial_statement_user("filer")
+  fs_other_user = financial_statement_user("other_spouse")
+---
+initial: True
+code: |
+  def financial_statement_user(role):
+    for user in users:
+      if getattr(user, "financial_statement_role", None) == role:
+        return user
+    return users[0] if role == "filer" else users[1]
+---
+id: financial statement spouse
+question: |
+  What role does ${ users[0] } have for this financial statement?
+fields:
+  - no label: users[0].financial_statement_role
+    datatype: radio
+    choices:
+      - The spouse whose financial statement this is: filer
+      - The other spouse: other_spouse
 ---
 id: financial_form_type
 code: |
@@ -208,17 +239,17 @@ attachment:
     - "docket_number_p3": ${ docket_number }
     - "trial_court_division_p4": ${ fs_showifdef_or_default('financial_statement_court_division') or (trial_court.division if hasattr(trial_court, 'division') else '') }
     - "docket_number_p4": ${ docket_number }
-    - "plaintiff_petitioner_name": ${ users[0] }
-    - "defendant_petitioner_name": ${ other_parties[0] }
+    - "plaintiff_petitioner_name": ${ fs_user }
+    - "defendant_petitioner_name": ${ fs_other_user }
     # Section 1: Personal Information
-    - "user_name": ${ users[0] }
+    - "user_name": ${ fs_user }
     - "user_ssn": ${ showifdef('user_ssn') }
-    - "user_address_street": ${ users[0].address.address }
-    - "user_address_city": ${ users[0].address.city }
-    - "user_address_state": ${ users[0].address.state }
-    - "user_address_zip": ${ users[0].address.zip }
-    - "user_phone": ${ fs_normalize_phone(users[0].phone_number) if defined('users[0].phone_number') else '' }
-    - "user_birthdate": ${ users[0].birthdate.format() }
+    - "user_address_street": ${ fs_user.address.address }
+    - "user_address_city": ${ fs_user.address.city }
+    - "user_address_state": ${ fs_user.address.state }
+    - "user_address_zip": ${ fs_user.address.zip }
+    - "user_phone": ${ fs_normalize_phone(fs_user.phone_number) if defined('fs_user.phone_number') else '' }
+    - "user_birthdate": ${ fs_user.birthdate.format() }
     - "children_living_count": ${ showifdef('children_living_with_user_count') }
     - "user_occupation": ${ showifdef('user_job_title') }
     - "user_employer_name": ${ showifdef('user_employer_name') }
@@ -457,17 +488,17 @@ attachment:
     - "docket_number_p8": ${ docket_number }
     - "trial_court_division_p9": ${ fs_showifdef_or_default('financial_statement_court_division') or (trial_court.division if hasattr(trial_court, 'division') else '') }
     - "docket_number_p9": ${ docket_number }
-    - "plaintiff_petitioner_name": ${ users[0] }
-    - "defendant_petitioner_name": ${ other_parties[0] }
+    - "plaintiff_petitioner_name": ${ fs_user }
+    - "defendant_petitioner_name": ${ fs_other_user }
     # Section I: Personal Information
-    - "user_name": ${ users[0] }
+    - "user_name": ${ fs_user }
     - "user_ssn": ${ showifdef('user_ssn') }
-    - "user_address_street": ${ users[0].address.address }
-    - "user_address_city": ${ users[0].address.city }
-    - "user_address_state": ${ users[0].address.state }
-    - "user_address_zip": ${ users[0].address.zip }
-    - "user_phone": ${ fs_normalize_phone(users[0].phone_number) if defined('users[0].phone_number') else '' }
-    - "user_birthdate": ${ users[0].birthdate.format() }
+    - "user_address_street": ${ fs_user.address.address }
+    - "user_address_city": ${ fs_user.address.city }
+    - "user_address_state": ${ fs_user.address.state }
+    - "user_address_zip": ${ fs_user.address.zip }
+    - "user_phone": ${ fs_normalize_phone(fs_user.phone_number) if defined('fs_user.phone_number') else '' }
+    - "user_birthdate": ${ fs_user.birthdate.format() }
     - "children_living_count": ${ showifdef('children_living_with_user_count') }
     - "user_occupation": ${ showifdef('user_job_title') }
     - "user_employer_name": ${ showifdef('user_employer_name') }
@@ -833,7 +864,7 @@ attachment:
   pdf template file: financial_statement_schedule_a.pdf
   fields:
     # Header
-    - "sa_name": ${ users[0] }
+    - "sa_name": ${ fs_user }
     - "sa_docket_number": ${ docket_number }
     # Gross receipts
     - "sa_gross_monthly_receipts": ${ fs_currency_zero(value('schedule_a_gross_monthly_receipts') if defined('schedule_a_gross_monthly_receipts') else None) }
@@ -919,7 +950,7 @@ attachment:
   pdf template file: financial_statement_schedule_b.pdf
   fields:
     # Header
-    - "sb_name": ${ users[0] }
+    - "sb_name": ${ fs_user }
     - "sb_docket_number": ${ docket_number }
     # Annual rent received
     - "sb_annual_rent_received": ${ fs_currency_zero(value('schedule_b_annual_rent_received') if defined('schedule_b_annual_rent_received') else None) }

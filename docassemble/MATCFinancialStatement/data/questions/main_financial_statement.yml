@@ -11,8 +11,7 @@ code: |
   allowed_courts = ["Probate and Family Court"]
 ---
 objects:
-  - users: ALPeopleList.using(target_number=1)
-  - other_parties: ALPeopleList.using(target_number=1)
+  - users: ALPeopleList.using(target_number=2)
   - trial_court: MACourt
 ---
 code: |
