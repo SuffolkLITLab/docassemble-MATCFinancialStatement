@@ -19,151 +19,155 @@ metadata:
 ---
 id: short_form_sections
 sets:
-  - short_form_sections
+  - fs_user.short_form_sections
+
 code: |
   nav.set_section("deductions")
   set_progress(60)
-  short_deductions
-  short_adjusted_net_income
-  short_other_deductions
-  short_net_income
-  short_prior_year
-  fs_checkpoint_deductions
+  fs_user.short_deductions
+  fs_user.short_adjusted_net_income
+  fs_user.short_other_deductions
+  fs_user.short_net_income
+  fs_user.short_prior_year
+  fs_user.fs_checkpoint_deductions
   nav.set_section("expenses")
   set_progress(70)
-  expense_list.gathered
-  short_expense_other_description
-  short_expenses_total
-  if short_expenses_require_confirmation:
-    confirm_no_expenses_short_screen
-  fs_checkpoint_expenses
+  fs_user.expense_list.gathered
+  fs_user.short_expense_other_description
+  fs_user.short_expenses_total
+  if fs_user.short_expenses_require_confirmation:
+    fs_user.confirm_no_expenses_short_screen
+  fs_user.fs_checkpoint_expenses
   nav.set_section("assets")
   set_progress(80)
-  short_counsel_fees
-  short_assets_real_estate
-  motor_vehicles.gather()
-  pensions.gather()
-  other_assets.gather()
-  short_assets_total
-  fs_checkpoint_assets
+  fs_user.short_counsel_fees
+  fs_user.short_assets_real_estate
+  fs_user.motor_vehicles.gather()
+  fs_user.pensions.gather()
+  fs_user.other_assets.gather()
+  fs_user.short_assets_total
+  fs_user.fs_checkpoint_assets
   nav.set_section("liabilities")
   set_progress(90)
-  liabilities.gather()
-  short_liabilities_total
-  short_certification
-  attorney_statement
-  fs_checkpoint_liabilities
-  short_form_sections = True
+  fs_user.liabilities.gather()
+  fs_user.short_liabilities_total
+  fs_user.short_certification
+  fs_user.attorney_statement
+  fs_user.fs_checkpoint_liabilities
+  fs_user.short_form_sections = True
 ---
 id: short_deductions
 sets:
-  - short_deductions
-continue button field: short_deductions
+  - fs_user.short_deductions
+
+continue button field: fs_user.short_deductions
 question: |
   Itemized deductions from gross income
 subquestion: |
   Enter the amount taken out in one pay period for each line.
-  Use your chosen cadence (${ financial_cadence_default }).
+  Use your chosen cadence (${ fs_user.financial_cadence_default }).
   These are amounts withheld from your gross pay.
 
   **Examples:** federal tax, state tax, FICA, union dues.
 fields:
-  - Federal income tax deductions: short_deduction_federal
+  - Federal income tax deductions: fs_user.short_deduction_federal
     datatype: currency
     required: False
-  - Number of federal exemptions: short_deduction_federal_exemptions
+  - Number of federal exemptions: fs_user.short_deduction_federal_exemptions
     datatype: integer
     required: False
     min: 0
-  - State income tax deductions: short_deduction_state
+  - State income tax deductions: fs_user.short_deduction_state
     datatype: currency
     required: False
-  - Number of state exemptions: short_deduction_state_exemptions
+  - Number of state exemptions: fs_user.short_deduction_state_exemptions
     datatype: integer
     required: False
     min: 0
-  - F.I.C.A. and Medicare: short_deduction_fica
+  - F.I.C.A. and Medicare: fs_user.short_deduction_fica
     datatype: currency
     required: False
-  - Medical insurance: short_deduction_medical
+  - Medical insurance: fs_user.short_deduction_medical
     datatype: currency
     required: False
-  - Union dues: short_deduction_union
+  - Union dues: fs_user.short_deduction_union
     datatype: currency
     required: False
 ---
 code: |
-  short_deductions_total_weekly = (
-    to_weekly(value("short_deduction_federal"), financial_cadence_default)
-    + to_weekly(value("short_deduction_state"), financial_cadence_default)
-    + to_weekly(value("short_deduction_fica"), financial_cadence_default)
-    + to_weekly(value("short_deduction_medical"), financial_cadence_default)
-    + to_weekly(value("short_deduction_union"), financial_cadence_default)
+  fs_user.short_deductions_total_weekly = (
+    to_weekly(value("fs_user.short_deduction_federal"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_deduction_state"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_deduction_fica"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_deduction_medical"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_deduction_union"), fs_user.financial_cadence_default)
   )
 ---
 id: short_adjusted_net_income
-continue button field: short_adjusted_net_income
+continue button field: fs_user.short_adjusted_net_income
 question: |
   Adjusted net weekly income
 subquestion: |
-  Total deductions: ${ currency(short_deductions_total_weekly) }
+  Total deductions: ${ currency(fs_user.short_deductions_total_weekly) }
 
-  Adjusted net weekly income: ${ currency(float(income_total_weekly) - float(short_deductions_total_weekly)) }
+  Adjusted net weekly income: ${ currency(float(fs_user.income_total_weekly) - float(fs_user.short_deductions_total_weekly)) }
 ---
 code: |
-  short_adjusted_net_weekly_income = float(income_total_weekly) - float(short_deductions_total_weekly)
+  fs_user.short_adjusted_net_weekly_income = float(fs_user.income_total_weekly) - float(fs_user.short_deductions_total_weekly)
 ---
 id: short_other_deductions
 sets:
-  - short_other_deductions
-continue button field: short_other_deductions
+  - fs_user.short_other_deductions
+
+continue button field: fs_user.short_other_deductions
 question: |
   Other deductions from salary or wages
 subquestion: |
-  Enter amounts using your chosen cadence (${ financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
   Include deductions not listed on the previous page.
 
   **Examples:** retirement contributions, savings, credit union loan payments.
 fields:
-  - Credit union loan repayment: short_other_deduction_credit_union_loan
+  - Credit union loan repayment: fs_user.short_other_deduction_credit_union_loan
     datatype: currency
     required: False
-  - Savings: short_other_deduction_savings
+  - Savings: fs_user.short_other_deduction_savings
     datatype: currency
     required: False
-  - Retirement: short_other_deduction_retirement
+  - Retirement: fs_user.short_other_deduction_retirement
     datatype: currency
     required: False
-  - Other (specify): short_other_deduction_other_description
+  - Other (specify): fs_user.short_other_deduction_other_description
     required: False
-  - Other amount: short_other_deduction_other_amount
+  - Other amount: fs_user.short_other_deduction_other_amount
     datatype: currency
     required: False
 ---
 code: |
-  short_other_deductions_total_weekly = (
-    to_weekly(value("short_other_deduction_credit_union_loan"), financial_cadence_default)
-    + to_weekly(value("short_other_deduction_savings"), financial_cadence_default)
-    + to_weekly(value("short_other_deduction_retirement"), financial_cadence_default)
-    + to_weekly(value("short_other_deduction_other_amount"), financial_cadence_default)
+  fs_user.short_other_deductions_total_weekly = (
+    to_weekly(value("fs_user.short_other_deduction_credit_union_loan"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_other_deduction_savings"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_other_deduction_retirement"), fs_user.financial_cadence_default)
+    + to_weekly(value("fs_user.short_other_deduction_other_amount"), fs_user.financial_cadence_default)
   )
 ---
 id: short_net_income
-continue button field: short_net_income
+continue button field: fs_user.short_net_income
 question: |
   Net weekly income
 subquestion: |
-  Net weekly income: ${ currency(float(short_adjusted_net_weekly_income) - float(short_other_deductions_total_weekly)) }
+  Net weekly income: ${ currency(float(fs_user.short_adjusted_net_weekly_income) - float(fs_user.short_other_deductions_total_weekly)) }
 
   This is your income after deductions.
 ---
 code: |
-  short_net_weekly_income = float(short_adjusted_net_weekly_income) - float(short_other_deductions_total_weekly)
+  fs_user.short_net_weekly_income = float(fs_user.short_adjusted_net_weekly_income) - float(fs_user.short_other_deductions_total_weekly)
 ---
 id: short_prior_year
 sets:
-  - short_prior_year
-continue button field: short_prior_year
+  - fs_user.short_prior_year
+
+continue button field: fs_user.short_prior_year
 question: |
   Prior year income
 subquestion: |
@@ -171,113 +175,115 @@ subquestion: |
 
   **Tip:** If you do not know the exact amount, enter your best estimate.
 fields:
-  - Gross yearly income from prior year: prior_year_gross_amount
+  - Gross yearly income from prior year: fs_user.prior_year_gross_amount
     datatype: currency
     required: False
-  - Number of years paid into Social Security: years_paid_into_social_security
+  - Number of years paid into Social Security: fs_user.years_paid_into_social_security
     datatype: integer
     required: False
     min: 0
 ---
 id: short_expenses_part_1
 sets:
-  - short_expenses_part_1
-continue button field: short_expenses_part_1
+  - fs_user.short_expenses_part_1
+
+continue button field: fs_user.short_expenses_part_1
 question: |
   Weekly expenses (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
   Include regular household expenses.
 fields:
-  - Rent or mortgage (PIT): short_expense_rent
+  - Rent or mortgage (PIT): fs_user.short_expense_rent
     datatype: currency
     required: False
-  - Homeowners or tenant insurance: short_expense_home_insurance
+  - Homeowners or tenant insurance: fs_user.short_expense_home_insurance
     datatype: currency
     required: False
-  - Maintenance and repair: short_expense_maintenance
+  - Maintenance and repair: fs_user.short_expense_maintenance
     datatype: currency
     required: False
-  - Heat: short_expense_heat
+  - Heat: fs_user.short_expense_heat
     datatype: currency
     required: False
-  - Electricity or gas: short_expense_electric
+  - Electricity or gas: fs_user.short_expense_electric
     datatype: currency
     required: False
-  - Telephone: short_expense_phone
+  - Telephone: fs_user.short_expense_phone
     datatype: currency
     required: False
-  - Water and sewer: short_expense_water
+  - Water and sewer: fs_user.short_expense_water
     datatype: currency
     required: False
-  - Food: short_expense_food
+  - Food: fs_user.short_expense_food
     datatype: currency
     required: False
-  - House supplies: short_expense_supplies
+  - House supplies: fs_user.short_expense_supplies
     datatype: currency
     required: False
-  - Laundry and cleaning: short_expense_laundry
+  - Laundry and cleaning: fs_user.short_expense_laundry
     datatype: currency
     required: False
 ---
 id: short_expenses_part_2
 sets:
-  - short_expenses_part_2
-continue button field: short_expenses_part_2
+  - fs_user.short_expenses_part_2
+
+continue button field: fs_user.short_expenses_part_2
 question: |
   Weekly expenses (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
   Include transportation and child-related expenses.
 fields:
-  - Clothing: short_expense_clothing
+  - Clothing: fs_user.short_expense_clothing
     datatype: currency
     required: False
-  - Life insurance: short_expense_life_insurance
+  - Life insurance: fs_user.short_expense_life_insurance
     datatype: currency
     required: False
-  - Medical insurance: short_expense_medical_insurance
+  - Medical insurance: fs_user.short_expense_medical_insurance
     datatype: currency
     required: False
-  - Uninsured medicals: short_expense_uninsured_medical
+  - Uninsured medicals: fs_user.short_expense_uninsured_medical
     datatype: currency
     required: False
-  - Incidentals and toiletries: short_expense_incidentals
+  - Incidentals and toiletries: fs_user.short_expense_incidentals
     datatype: currency
     required: False
-  - Motor vehicle expenses: short_expense_motor_vehicle
+  - Motor vehicle expenses: fs_user.short_expense_motor_vehicle
     datatype: currency
     required: False
-  - Motor vehicle payment: short_expense_motor_vehicle_payment
+  - Motor vehicle payment: fs_user.short_expense_motor_vehicle_payment
     datatype: currency
     required: False
-  - Child care: short_expense_child_care
+  - Child care: fs_user.short_expense_child_care
     datatype: currency
     required: False
-  - Other (explain): short_expense_other_description
+  - Other (explain): fs_user.short_expense_other_description
     required: False
-  - Other amount: short_expense_other_amount
+  - Other amount: fs_user.short_expense_other_amount
     datatype: currency
     required: False
 ---
 code: |
-  short_expenses_total_weekly = expense_list.total(times_per_year=52)
+  fs_user.short_expenses_total_weekly = fs_user.expense_list.total(times_per_year=52)
 ---
 id: short_expenses_total
-continue button field: short_expenses_total
+continue button field: fs_user.short_expenses_total
 question: |
   Weekly expenses total
 subquestion: |
-  Total weekly expenses: ${ currency(short_expenses_total_weekly) }
+  Total weekly expenses: ${ currency(fs_user.short_expenses_total_weekly) }
 
   You can still go back and edit any expense before you finish.
 ---
 code: |
-  if not short_expenses_require_confirmation:
-    confirm_no_expenses_short = False
+  if not fs_user.short_expenses_require_confirmation:
+    fs_user.confirm_no_expenses_short = False
 ---
 id: confirm_no_expenses_short_screen
-continue button field: confirm_no_expenses_short_screen
+continue button field: fs_user.confirm_no_expenses_short_screen
 question: |
   Confirm no expenses
 subquestion: |
@@ -285,17 +291,18 @@ subquestion: |
 
   Choose "Yes" only if you truly do not have household expenses to list.
 fields:
-  - Yes, I do not have household expenses to list right now: confirm_no_expenses_short
+  - Yes, I do not have household expenses to list right now: fs_user.confirm_no_expenses_short
     datatype: yesnoradio
     required: True
 ---
 code: |
-  short_expenses_require_confirmation = short_expenses_total_weekly == 0
+  fs_user.short_expenses_require_confirmation = fs_user.short_expenses_total_weekly == 0
 ---
 id: short_counsel_fees
 sets:
-  - short_counsel_fees
-continue button field: short_counsel_fees
+  - fs_user.short_counsel_fees
+
+continue button field: fs_user.short_counsel_fees
 question: |
   Counsel fees
 subquestion: |
@@ -303,23 +310,24 @@ subquestion: |
 
   If you do not have an attorney, you can leave every field on this page blank.
 fields:
-  - Retainer amount(s) paid to your attorney(s): short_counsel_retainer
+  - Retainer amount(s) paid to your attorney(s): fs_user.short_counsel_retainer
     datatype: currency
     required: False
-  - Legal fees incurred so far against retainer(s): short_counsel_fees_incurred
+  - Legal fees incurred so far against retainer(s): fs_user.short_counsel_fees_incurred
     datatype: currency
     required: False
-  - Anticipated total legal expense (minimum): short_counsel_range_min
+  - Anticipated total legal expense (minimum): fs_user.short_counsel_range_min
     datatype: currency
     required: False
-  - Anticipated total legal expense (maximum): short_counsel_range_max
+  - Anticipated total legal expense (maximum): fs_user.short_counsel_range_max
     datatype: currency
     required: False
 ---
 id: short_assets_real_estate
 sets:
-  - short_assets_real_estate
-continue button field: short_assets_real_estate
+  - fs_user.short_assets_real_estate
+
+continue button field: fs_user.short_assets_real_estate
 question: |
   Assets - real estate
 subquestion: |
@@ -328,54 +336,54 @@ subquestion: |
   Include the best numbers you have for value, mortgage balance, and equity.
   Estimates are fine.
 fields:
-  - Real estate location: short_real_estate_location
+  - Real estate location: fs_user.short_real_estate_location
     required: False
-  - Title held in the name of: short_real_estate_title
+  - Title held in the name of: fs_user.short_real_estate_title
     required: False
-  - Fair market value: short_real_estate_fmv
+  - Fair market value: fs_user.short_real_estate_fmv
     datatype: currency
     required: False
-  - Mortgage amount: short_real_estate_mortgage
+  - Mortgage amount: fs_user.short_real_estate_mortgage
     datatype: currency
     required: False
-  - Equity: short_real_estate_equity
+  - Equity: fs_user.short_real_estate_equity
     datatype: currency
     required: False
-  - Annuity value: short_annuity_value
+  - Annuity value: fs_user.short_annuity_value
     datatype: currency
     required: False
-  - Life insurance cash surrender value: short_life_insurance_cash_value
+  - Life insurance cash surrender value: fs_user.short_life_insurance_cash_value
     datatype: currency
     required: False
 ---
 code: |
   _short_re = (
-    fs_safe_float(value("short_real_estate_equity"))
-    if defined("short_real_estate_equity")
-    and value("short_real_estate_equity") not in (None, "")
+    fs_safe_float(value("fs_user.short_real_estate_equity"))
+    if defined("fs_user.short_real_estate_equity")
+    and value("fs_user.short_real_estate_equity") not in (None, "")
     else 0.0
   )
-  _short_vehicles = fs_sum_list_attr(motor_vehicles, "equity") if defined("motor_vehicles") else 0.0
+  _short_vehicles = fs_sum_list_attr(fs_user.motor_vehicles, "equity") if defined("fs_user.motor_vehicles") else 0.0
   _short_pensions = 0.0
-  if defined("pensions"):
+  if defined("fs_user.pensions"):
     _short_pensions = (
-      fs_sum_list_attr(pensions, "defined_benefit_amount")
-      + fs_sum_list_attr(pensions, "defined_contribution_amount")
+      fs_sum_list_attr(fs_user.pensions, "defined_benefit_amount")
+      + fs_sum_list_attr(fs_user.pensions, "defined_contribution_amount")
     )
   _short_annuity = (
-    fs_safe_float(value("short_annuity_value"))
-    if defined("short_annuity_value")
-    and value("short_annuity_value") not in (None, "")
+    fs_safe_float(value("fs_user.short_annuity_value"))
+    if defined("fs_user.short_annuity_value")
+    and value("fs_user.short_annuity_value") not in (None, "")
     else 0.0
   )
   _short_life_ins = (
-    fs_safe_float(value("short_life_insurance_cash_value"))
-    if defined("short_life_insurance_cash_value")
-    and value("short_life_insurance_cash_value") not in (None, "")
+    fs_safe_float(value("fs_user.short_life_insurance_cash_value"))
+    if defined("fs_user.short_life_insurance_cash_value")
+    and value("fs_user.short_life_insurance_cash_value") not in (None, "")
     else 0.0
   )
-  _short_other = fs_sum_list_attr(other_assets, "current_balance") if defined("other_assets") else 0.0
-  short_assets_total_value = currency(
+  _short_other = fs_sum_list_attr(fs_user.other_assets, "current_balance") if defined("fs_user.other_assets") else 0.0
+  fs_user.short_assets_total_value = currency(
     _short_re
     + _short_vehicles
     + _short_pensions
@@ -385,37 +393,38 @@ code: |
   )
 ---
 id: short_assets_total
-continue button field: short_assets_total
+continue button field: fs_user.short_assets_total
 question: |
   Assets summary
 subquestion: |
   Here is a quick summary of the assets you listed:
 
-  - **Motor vehicles:** ${ len(motor_vehicles) if defined('motor_vehicles') and motor_vehicles.there_are_any else 0 }
-  - **Retirement plans:** ${ len(pensions) if defined('pensions') and pensions.there_are_any else 0 }
-  - **Other assets:** ${ len(other_assets) if defined('other_assets') and other_assets.there_are_any else 0 }
+  - **Motor vehicles:** ${ len(fs_user.motor_vehicles) if defined('fs_user.motor_vehicles') and fs_user.motor_vehicles.there_are_any else 0 }
+  - **Retirement plans:** ${ len(fs_user.pensions) if defined('fs_user.pensions') and fs_user.pensions.there_are_any else 0 }
+  - **Other assets:** ${ len(fs_user.other_assets) if defined('fs_user.other_assets') and fs_user.other_assets.there_are_any else 0 }
 
   Use **Back** if you want to make changes before the form is generated.
 ---
 id: short_liabilities_total
-continue button field: short_liabilities_total
+continue button field: fs_user.short_liabilities_total
 question: |
   Liabilities summary
 subquestion: |
-  **Liabilities listed:** ${ len(liabilities) if defined('liabilities') and liabilities.there_are_any else 0 }
+  **Liabilities listed:** ${ len(fs_user.liabilities) if defined('fs_user.liabilities') and fs_user.liabilities.there_are_any else 0 }
 
   Use **Back** if you want to add or edit debts before you finish.
 ---
 code: |
-  _short_liab_due = fs_sum_list_attr(liabilities, "amount_due") if defined("liabilities") else 0.0
-  _short_liab_weekly = fs_sum_list_attr(liabilities, "weekly_payment") if defined("liabilities") else 0.0
-  short_liabilities_total_amount_due = currency(_short_liab_due)
-  short_liabilities_total_weekly_payment = currency(_short_liab_weekly)
+  _short_liab_due = fs_sum_list_attr(fs_user.liabilities, "amount_due") if defined("fs_user.liabilities") else 0.0
+  _short_liab_weekly = fs_sum_list_attr(fs_user.liabilities, "weekly_payment") if defined("fs_user.liabilities") else 0.0
+  fs_user.short_liabilities_total_amount_due = currency(_short_liab_due)
+  fs_user.short_liabilities_total_weekly_payment = currency(_short_liab_weekly)
 ---
 id: short_certification
 sets:
-  - short_certification
-continue button field: short_certification
+  - fs_user.short_certification
+
+continue button field: fs_user.short_certification
 question: |
   Certification
 subquestion: |
@@ -424,8 +433,8 @@ subquestion: |
 
   Enter your signature and the date you are signing this statement.
 fields:
-  - Signature: user_signature
+  - Signature: fs_user.user_signature
     required: False
-  - Signature date: user_signature_date
+  - Signature date: fs_user.user_signature_date
     datatype: date
     required: False

@@ -15,10 +15,31 @@ objects:
   - trial_court: MACourt
 ---
 code: |
-  fs_short.enabled = financial_form_type == "short"
-  fs_long.enabled = financial_form_type == "long"
-  fs_schedule_a.enabled = defined("has_self_employment_income") and has_self_employment_income
-  fs_schedule_b.enabled = defined("has_rental_income") and has_rental_income
+  for user in users:
+    user.financial_statement_short_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.financial_form_type")
+      and user.financial_form_type == "short"
+    )
+    user.financial_statement_long_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.financial_form_type")
+      and user.financial_form_type == "long"
+    )
+    user.financial_statement_schedule_a_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.has_self_employment_income")
+      and user.has_self_employment_income
+    )
+    user.financial_statement_schedule_b_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.has_rental_income")
+      and user.has_rental_income
+    )
 ---
 metadata:
   title: |
@@ -67,8 +88,8 @@ code: |
   ]
 ---
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[fs_short, fs_long, fs_schedule_a, fs_schedule_b], filename="financial_statement", title="All financial statement forms for your records", enabled=True)
-  - al_court_bundle: ALDocumentBundle.using(elements=[fs_short, fs_long, fs_schedule_a, fs_schedule_b], filename="financial_statement", title="All financial statement forms for the court", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for the court", enabled=True)
 ---
 sections:
   - review_fs: Review your answers
