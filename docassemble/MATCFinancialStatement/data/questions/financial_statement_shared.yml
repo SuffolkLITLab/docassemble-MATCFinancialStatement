@@ -1129,6 +1129,7 @@ fields:
     datatype: yesnoradio
     required: True
 ---
+id: review_court_and_parties_fs
 event: review_court_and_parties_fs
 question: |
   Review court and parties
@@ -1165,6 +1166,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_personal_information_fs
 event: review_personal_information_fs
 question: |
   Review personal information
@@ -1208,6 +1210,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_schedule_a_fs
 event: review_schedule_a_fs
 question: |
   Review Schedule A
@@ -1240,6 +1243,7 @@ review:
       **Year-to-date receipts**
       ${ currency(fs_user.schedule_a_gross_receipts_ytd) if defined("fs_user.schedule_a_gross_receipts_ytd") and fs_user.schedule_a_gross_receipts_ytd not in (None, "") else "Not provided" }
 ---
+id: review_schedule_b_fs
 event: review_schedule_b_fs
 question: |
   Review Schedule B
@@ -1256,6 +1260,7 @@ review:
       ${ len(fs_user.schedule_b_expenses) if defined("fs_user.schedule_b_expenses") else 0 } listed
       Annual total: ${ currency(fs_user.schedule_b_total_annual_expenses) if defined("fs_user.schedule_b_total_annual_expenses") else currency(0) }
 ---
+id: review_income_fs
 event: review_income_fs
 question: |
   Review income
@@ -1306,6 +1311,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_deductions_short_fs
 event: review_deductions_short_fs
 question: |
   Review deductions
@@ -1325,6 +1331,7 @@ review:
       **Prior year income**
       ${ currency(fs_user.prior_year_gross_amount) if defined("fs_user.prior_year_gross_amount") and fs_user.prior_year_gross_amount not in (None, "") else "Not provided" }
 ---
+id: review_deductions_long_fs
 event: review_deductions_long_fs
 question: |
   Review deductions
@@ -1353,6 +1360,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_expenses_short_fs
 event: review_expenses_short_fs
 question: |
   Review expenses
@@ -1365,6 +1373,7 @@ review:
       ${ len(fs_user.expense_list) if defined("fs_user.expense_list") else 0 } listed
       Weekly total: ${ currency(fs_user.short_expenses_total_weekly) if defined("fs_user.short_expenses_total_weekly") else currency(0) }
 ---
+id: review_expenses_long_fs
 event: review_expenses_long_fs
 question: |
   Review expenses
@@ -1391,6 +1400,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_assets_short_fs
 event: review_assets_short_fs
 question: |
   Review assets
@@ -1418,6 +1428,7 @@ review:
       **Other assets**
       ${ len(fs_user.other_assets) if defined("fs_user.other_assets.there_are_any") and fs_user.other_assets.there_are_any else 0 } listed
 ---
+id: review_assets_long_fs
 event: review_assets_long_fs
 question: |
   Review assets
@@ -1463,6 +1474,7 @@ subquestion: |
 
   Press **Next** when you are ready to keep going.
 ---
+id: review_liabilities_short_fs
 event: review_liabilities_short_fs
 question: |
   Review liabilities and signatures
@@ -1482,6 +1494,7 @@ review:
       **Attorney information**
       ${ fs_yes_no_text("has_attorney") }
 ---
+id: review_liabilities_long_fs
 event: review_liabilities_long_fs
 question: |
   Review liabilities and signatures
@@ -1591,6 +1604,7 @@ code: |
   except:
     fs_section_links = []
 ---
+id: review_all_sections_fs
 event: review_all_sections_fs
 question: |
   Review by section
