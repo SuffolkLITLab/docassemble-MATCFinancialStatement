@@ -10,6 +10,11 @@ initial: True
 code: |
   allowed_courts = ["Probate and Family Court"]
 ---
+objects:
+  - users: ALPeopleList.using(target_number=1)
+  - other_parties: ALPeopleList.using(target_number=1)
+  - trial_court: MACourt
+---
 code: |
   fs_short.enabled = financial_form_type == "short"
   fs_long.enabled = financial_form_type == "long"

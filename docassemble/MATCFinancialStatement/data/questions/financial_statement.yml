@@ -14,11 +14,6 @@ include:
   - financial_statement_schedule_b.yml
 ---
 objects:
-  - users: ALPeopleList.using(target_number=1)
-  - other_parties: ALPeopleList.using(target_number=1)
-  - trial_court: MACourt
----
-objects:
   - fs_short: ALDocument.using(title="Financial Statement (Short Form)", filename="financial_statement_short", has_addendum=False)
   - fs_long: ALDocument.using(title="Financial Statement (Long Form)", filename="financial_statement_long", has_addendum=False)
   - fs_schedule_a: ALDocument.using(title="Schedule A - Self-Employment Income", filename="financial_statement_schedule_a", has_addendum=False)
