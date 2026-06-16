@@ -114,48 +114,57 @@ objects:
 ---
 id: long_form_sections
 sets:
-  - fs_user.long_form_sections
+  - users[i].long_form_sections
 
 code: |
   nav.set_section("deductions")
   set_progress(60)
-  fs_user.long_deductions
-  fs_user.long_net_income
-  fs_user.long_prior_year
-  fs_user.fs_checkpoint_deductions
+  users[i].long_deductions
+  users[i].long_net_income
+  users[i].long_prior_year
+  users[i].fs_checkpoint_deductions
   nav.set_section("expenses")
   set_progress(70)
-  fs_user.long_expense_list.gathered
-  fs_user.long_expenses_total
-  if fs_user.long_expenses_require_confirmation:
-    fs_user.confirm_no_expenses_long_screen
-  fs_user.fs_checkpoint_expenses
+  users[i].long_expense_list.statement_user = users[i]
+  users[i].long_expense_list.gathered
+  users[i].long_expenses_total
+  if users[i].long_expenses_require_confirmation:
+    users[i].confirm_no_expenses_long_screen
+  users[i].fs_checkpoint_expenses
   nav.set_section("assets")
   set_progress(80)
-  fs_user.long_counsel_fees
-  fs_user.long_real_estate_primary
-  fs_user.long_real_estate_secondary
-  fs_user.motor_vehicles.gather()
-  fs_user.pensions.gather()
-  fs_user.other_assets.gather()
-  fs_user.long_assets_total
-  fs_user.fs_checkpoint_assets
+  users[i].long_counsel_fees
+  users[i].long_real_estate_primary
+  users[i].long_real_estate_secondary
+  users[i].motor_vehicles.gather()
+  users[i].pensions.gather()
+  users[i].other_assets.gather()
+  users[i].long_assets_total
+  users[i].fs_checkpoint_assets
   nav.set_section("liabilities")
   set_progress(90)
-  fs_user.liabilities.gather()
-  fs_user.long_liabilities_total
-  fs_user.long_certification
-  fs_user.long_notary
-  fs_user.attorney_statement
-  fs_user.fs_checkpoint_liabilities
-  fs_user.long_form_sections = True
+  users[i].liabilities.gather()
+  users[i].long_liabilities_total
+  users[i].long_certification
+  users[i].long_notary
+  users[i].attorney_statement
+  users[i].fs_checkpoint_liabilities
+  users[i].long_form_sections = True
 ---
 id: long_expense_sources
 generic object: ALExpenseList
 question: |
-  Expense categories
+  % if users.number_gathered() > 1:
+  Expense categories for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  % else:
+  Expense categories for you
+  % endif
 subquestion: |
+  % if users.number_gathered() > 1:
+  Choose the expense categories that apply to ${ bold(x.statement_user.familiar(unique_names=users)) }'s household.
+  % else:
   Choose the expense categories that apply to your household.
+  % endif
 
   You will enter the amount and how often you pay it on the next screen.
   If a category is missing, choose "Other."
@@ -177,12 +186,25 @@ code: |
 id: long_expense_item
 generic object: ALExpenseList
 question: |
-  Expense details
+  % if users.number_gathered() > 1:
+  Expense details for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  % else:
+  Expense details for you
+  % endif
 subquestion: |
+  % if users.number_gathered() > 1:
+  Tell us about ${ bold(x.statement_user.familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
+  payment and how often it is paid. We will convert everything to weekly totals.
+  % else:
   Tell us about your ${ ordinal(i) } expense. Enter the amount for a single
   payment and how often you pay it. We will convert everything to weekly totals.
+  % endif
 
+  % if users.number_gathered() > 1:
+  **Example:** If ${ bold(x.statement_user.familiar(unique_names=users)) }'s electricity is $120 monthly, enter 120 and choose "Monthly."
+  % else:
   **Example:** If your electricity is $120 monthly, enter 120 and choose "Monthly."
+  % endif
 
   ${ collapse_template(fs_amount_entry_help) }
 fields:
@@ -198,7 +220,7 @@ fields:
     input type: radio
     code: |
       times_per_year_for_expenses
-    default: cadence_to_times_per_year(value("fs_user.financial_cadence_default") if defined("fs_user.financial_cadence_default") else "weekly")
+    default: cadence_to_times_per_year(x.statement_user.financial_cadence_default)
 validation code: |
   if x[i].source in ("employment_other", "other"):
     x[i].display_name = fs_text_or_default(getattr(x[i], "description", ""), long_expense_terms.get(x[i].source, x[i].source))
@@ -244,325 +266,329 @@ subquestion: |
 ---
 id: long_deductions
 sets:
-  - fs_user.long_deductions
+  - users[i].long_deductions
 
-continue button field: fs_user.long_deductions
+continue button field: users[i].long_deductions
 question: |
   Deductions from gross income
 subquestion: |
   Enter the amount taken out in one pay period for each line.
-  Use your chosen cadence (${ fs_user.financial_cadence_default }).
+  Use your chosen cadence (${ users[i].financial_cadence_default }).
   These are amounts withheld from your gross pay.
 
   ${ collapse_template(fs_estimate_help) }
 fields:
-  - Federal tax withholding/estimated payments: fs_user.long_deduction_federal
+  - Federal tax withholding/estimated payments: users[i].long_deduction_federal
     datatype: currency
     required: False
-  - Federal withholding allowances claimed: fs_user.long_federal_allowances
+  - Federal withholding allowances claimed: users[i].long_federal_allowances
     datatype: integer
     required: False
     min: 0
-  - State tax withholding/estimated payments: fs_user.long_deduction_state
+  - State tax withholding/estimated payments: users[i].long_deduction_state
     datatype: currency
     required: False
-  - State withholding allowances claimed: fs_user.long_state_allowances
+  - State withholding allowances claimed: users[i].long_state_allowances
     datatype: integer
     required: False
     min: 0
-  - F.I.C.A.: fs_user.long_deduction_fica
+  - F.I.C.A.: users[i].long_deduction_fica
     datatype: currency
     required: False
-  - Medicare: fs_user.long_deduction_medicare
+  - Medicare: users[i].long_deduction_medicare
     datatype: currency
     required: False
-  - Medical insurance: fs_user.long_deduction_medical
+  - Medical insurance: users[i].long_deduction_medical
     datatype: currency
     required: False
-  - Dental insurance: fs_user.long_deduction_dental
+  - Dental insurance: users[i].long_deduction_dental
     datatype: currency
     required: False
-  - Vision insurance: fs_user.long_deduction_vision
+  - Vision insurance: users[i].long_deduction_vision
     datatype: currency
     required: False
-  - Union dues: fs_user.long_deduction_union
+  - Union dues: users[i].long_deduction_union
     datatype: currency
     required: False
-  - Child support: fs_user.long_deduction_child_support
+  - Child support: users[i].long_deduction_child_support
     datatype: currency
     required: False
-  - Spousal support: fs_user.long_deduction_spousal_support
+  - Spousal support: users[i].long_deduction_spousal_support
     datatype: currency
     required: False
-  - Retirement: fs_user.long_deduction_retirement
+  - Retirement: users[i].long_deduction_retirement
     datatype: currency
     required: False
-  - Savings: fs_user.long_deduction_savings
+  - Savings: users[i].long_deduction_savings
     datatype: currency
     required: False
-  - Deferred compensation: fs_user.long_deduction_deferred_comp
+  - Deferred compensation: users[i].long_deduction_deferred_comp
     datatype: currency
     required: False
-  - Credit union (loan): fs_user.long_deduction_credit_union_loan
+  - Credit union (loan): users[i].long_deduction_credit_union_loan
     datatype: currency
     required: False
-  - Credit union (savings): fs_user.long_deduction_credit_union_savings
+  - Credit union (savings): users[i].long_deduction_credit_union_savings
     datatype: currency
     required: False
-  - Charitable contributions: fs_user.long_deduction_charity
+  - Charitable contributions: users[i].long_deduction_charity
     datatype: currency
     required: False
-  - Life insurance: fs_user.long_deduction_life_insurance
+  - Life insurance: users[i].long_deduction_life_insurance
     datatype: currency
     required: False
-  - Other (specify): fs_user.long_deduction_other_description
+  - Other (specify): users[i].long_deduction_other_description
     required: False
-  - Other amount: fs_user.long_deduction_other_amount
+  - Other amount: users[i].long_deduction_other_amount
     datatype: currency
     required: False
 ---
 code: |
-  fs_user.long_deductions_total_weekly = (
-    to_weekly(value("fs_user.long_deduction_federal"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_state"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_fica"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_medicare"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_medical"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_dental"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_vision"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_union"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_child_support"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_spousal_support"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_retirement"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_savings"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_deferred_comp"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_credit_union_loan"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_credit_union_savings"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_charity"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_life_insurance"), fs_user.financial_cadence_default)
-    + to_weekly(value("fs_user.long_deduction_other_amount"), fs_user.financial_cadence_default)
+  users[i].long_deductions_total_weekly = (
+    to_weekly(value("users[i].long_deduction_federal"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_state"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_fica"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_medicare"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_medical"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_dental"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_vision"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_union"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_child_support"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_spousal_support"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_retirement"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_savings"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_deferred_comp"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_credit_union_loan"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_credit_union_savings"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_charity"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_life_insurance"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_other_amount"), users[i].financial_cadence_default)
   )
 ---
 id: long_net_income
-continue button field: fs_user.long_net_income
+continue button field: users[i].long_net_income
 question: |
   Net weekly income
 subquestion: |
-  Total gross weekly income: ${ currency(fs_user.income_total_weekly) }
+  Total gross weekly income: ${ currency(users[i].income_total_weekly) }
 
-  Total weekly deductions: ${ currency(fs_user.long_deductions_total_weekly) }
+  Total weekly deductions: ${ currency(users[i].long_deductions_total_weekly) }
 
-  Net weekly income: ${ currency(float(fs_user.income_total_weekly) - float(fs_user.long_deductions_total_weekly)) }
+  Net weekly income: ${ currency(float(users[i].income_total_weekly) - float(users[i].long_deductions_total_weekly)) }
 
   This is your income after deductions.
 ---
 code: |
-  fs_user.long_net_weekly_income = float(fs_user.income_total_weekly) - float(fs_user.long_deductions_total_weekly)
+  users[i].long_net_weekly_income = float(users[i].income_total_weekly) - float(users[i].long_deductions_total_weekly)
 ---
 id: long_prior_year
 sets:
-  - fs_user.long_prior_year
+  - users[i].long_prior_year
 
-continue button field: fs_user.long_prior_year
+continue button field: users[i].long_prior_year
 question: |
   Prior year income
 subquestion: |
-  Use your most recent tax year or your best estimate.
+  % if users.number_gathered() > 1:
+  Use ${ bold(users[i].familiar(unique_names=users)) }'s most recent tax year or best estimate.
+  % else:
+  Use your most recent tax year or best estimate.
+  % endif
 
   ${ collapse_template(fs_estimate_help) }
 fields:
-  - Gross income from prior year: fs_user.prior_year_gross_amount
+  - Gross income from prior year: users[i].prior_year_gross_amount
     datatype: currency
     required: False
-  - Number of years paid into Social Security: fs_user.years_paid_into_social_security
+  - Number of years paid into Social Security: users[i].years_paid_into_social_security
     datatype: integer
     required: False
     min: 0
 ---
 id: long_expenses_part_1
 sets:
-  - fs_user.long_expenses_part_1
+  - users[i].long_expenses_part_1
 
-continue button field: fs_user.long_expenses_part_1
+continue button field: users[i].long_expenses_part_1
 question: |
   Weekly expenses (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
   If a line does not apply, leave it blank.
 fields:
-  - Rent: fs_user.long_expense_rent
+  - Rent: users[i].long_expense_rent
     datatype: currency
     required: False
-  - Mortgage (principal, interest, taxes, insurance if escrowed): fs_user.long_expense_mortgage
+  - Mortgage (principal, interest, taxes, insurance if escrowed): users[i].long_expense_mortgage
     datatype: currency
     required: False
-  - Property taxes and assessments: fs_user.long_expense_property_tax
+  - Property taxes and assessments: users[i].long_expense_property_tax
     datatype: currency
     required: False
-  - Homeowner/tenant insurance: fs_user.long_expense_home_insurance
+  - Homeowner/tenant insurance: users[i].long_expense_home_insurance
     datatype: currency
     required: False
-  - Maintenance fees or condo fees: fs_user.long_expense_maintenance_fees
+  - Maintenance fees or condo fees: users[i].long_expense_maintenance_fees
     datatype: currency
     required: False
-  - Heat: fs_user.long_expense_heat
+  - Heat: users[i].long_expense_heat
     datatype: currency
     required: False
-  - Electricity: fs_user.long_expense_electric
+  - Electricity: users[i].long_expense_electric
     datatype: currency
     required: False
-  - Propane or natural gas: fs_user.long_expense_gas
+  - Propane or natural gas: users[i].long_expense_gas
     datatype: currency
     required: False
-  - Telephone: fs_user.long_expense_phone
+  - Telephone: users[i].long_expense_phone
     datatype: currency
     required: False
-  - Water/sewer: fs_user.long_expense_water
+  - Water/sewer: users[i].long_expense_water
     datatype: currency
     required: False
-  - Food: fs_user.long_expense_food
+  - Food: users[i].long_expense_food
     datatype: currency
     required: False
-  - House supplies: fs_user.long_expense_supplies
+  - House supplies: users[i].long_expense_supplies
     datatype: currency
     required: False
 ---
 id: long_expenses_part_2
 sets:
-  - fs_user.long_expenses_part_2
+  - users[i].long_expenses_part_2
 
-continue button field: fs_user.long_expenses_part_2
+continue button field: users[i].long_expenses_part_2
 question: |
   Weekly expenses (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
   If a line does not apply, leave it blank.
 fields:
-  - Laundry: fs_user.long_expense_laundry
+  - Laundry: users[i].long_expense_laundry
     datatype: currency
     required: False
-  - Dry cleaning: fs_user.long_expense_dry_cleaning
+  - Dry cleaning: users[i].long_expense_dry_cleaning
     datatype: currency
     required: False
-  - Clothing: fs_user.long_expense_clothing
+  - Clothing: users[i].long_expense_clothing
     datatype: currency
     required: False
-  - Life insurance: fs_user.long_expense_life_insurance
+  - Life insurance: users[i].long_expense_life_insurance
     datatype: currency
     required: False
-  - Medical insurance: fs_user.long_expense_medical_insurance
+  - Medical insurance: users[i].long_expense_medical_insurance
     datatype: currency
     required: False
-  - Dental insurance: fs_user.long_expense_dental_insurance
+  - Dental insurance: users[i].long_expense_dental_insurance
     datatype: currency
     required: False
-  - Vision insurance: fs_user.long_expense_vision_insurance
+  - Vision insurance: users[i].long_expense_vision_insurance
     datatype: currency
     required: False
-  - Uninsured medical: fs_user.long_expense_uninsured_medical
+  - Uninsured medical: users[i].long_expense_uninsured_medical
     datatype: currency
     required: False
-  - Uninsured dental: fs_user.long_expense_uninsured_dental
+  - Uninsured dental: users[i].long_expense_uninsured_dental
     datatype: currency
     required: False
-  - Motor vehicle expenses: fs_user.long_expense_motor_vehicle
+  - Motor vehicle expenses: users[i].long_expense_motor_vehicle
     datatype: currency
     required: False
-  - Fuel: fs_user.long_expense_fuel
+  - Fuel: users[i].long_expense_fuel
     datatype: currency
     required: False
-  - Motor vehicle insurance: fs_user.long_expense_vehicle_insurance
+  - Motor vehicle insurance: users[i].long_expense_vehicle_insurance
     datatype: currency
     required: False
-  - Motor vehicle maintenance: fs_user.long_expense_vehicle_maintenance
+  - Motor vehicle maintenance: users[i].long_expense_vehicle_maintenance
     datatype: currency
     required: False
-  - Loan payment(s): fs_user.long_expense_loan_payments
+  - Loan payment(s): users[i].long_expense_loan_payments
     datatype: currency
     required: False
-  - Entertainment: fs_user.long_expense_entertainment
+  - Entertainment: users[i].long_expense_entertainment
     datatype: currency
     required: False
-  - Vacation: fs_user.long_expense_vacation
+  - Vacation: users[i].long_expense_vacation
     datatype: currency
     required: False
-  - Cable TV: fs_user.long_expense_cable
+  - Cable TV: users[i].long_expense_cable
     datatype: currency
     required: False
 ---
 id: long_expenses_part_3
 sets:
-  - fs_user.long_expenses_part_3
+  - users[i].long_expenses_part_3
 
-continue button field: fs_user.long_expenses_part_3
+continue button field: users[i].long_expenses_part_3
 question: |
   Weekly expenses (part 3)
 subquestion: |
-  Enter amounts using your chosen cadence (${ fs_user.financial_cadence_default }).
+  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
   If a line does not apply, leave it blank.
 fields:
-  - Child support (attach order if from different court): fs_user.long_expense_child_support
+  - Child support (attach order if from different court): users[i].long_expense_child_support
     datatype: currency
     required: False
-  - Child(ren)'s day care expense: fs_user.long_expense_child_day_care
+  - Child(ren)'s day care expense: users[i].long_expense_child_day_care
     datatype: currency
     required: False
-  - Child(ren)'s education: fs_user.long_expense_child_education
+  - Child(ren)'s education: users[i].long_expense_child_education
     datatype: currency
     required: False
-  - Education (self): fs_user.long_expense_education_self
+  - Education (self): users[i].long_expense_education_self
     datatype: currency
     required: False
-  - Employment-related uniforms: fs_user.long_expense_uniforms
+  - Employment-related uniforms: users[i].long_expense_uniforms
     datatype: currency
     required: False
-  - Employment-related travel: fs_user.long_expense_employment_travel
+  - Employment-related travel: users[i].long_expense_employment_travel
     datatype: currency
     required: False
-  - Employment continuing education: fs_user.long_expense_continuing_education
+  - Employment continuing education: users[i].long_expense_continuing_education
     datatype: currency
     required: False
-  - Employment expenses (other): fs_user.long_expense_employment_other_description
+  - Employment expenses (other): users[i].long_expense_employment_other_description
     required: False
-  - Employment expenses (other amount): fs_user.long_expense_employment_other_amount
+  - Employment expenses (other amount): users[i].long_expense_employment_other_amount
     datatype: currency
     required: False
-  - Lottery tickets: fs_user.long_expense_lottery
+  - Lottery tickets: users[i].long_expense_lottery
     datatype: currency
     required: False
-  - Charitable contributions: fs_user.long_expense_charity
+  - Charitable contributions: users[i].long_expense_charity
     datatype: currency
     required: False
-  - Child(ren)'s allowance: fs_user.long_expense_child_allowance
+  - Child(ren)'s allowance: users[i].long_expense_child_allowance
     datatype: currency
     required: False
-  - Extraordinary travel for visitation: fs_user.long_expense_visitation_travel
+  - Extraordinary travel for visitation: users[i].long_expense_visitation_travel
     datatype: currency
     required: False
-  - Other (specify): fs_user.long_expense_other_description
+  - Other (specify): users[i].long_expense_other_description
     required: False
-  - Other amount: fs_user.long_expense_other_amount
+  - Other amount: users[i].long_expense_other_amount
     datatype: currency
     required: False
 ---
 code: |
-  fs_user.long_expenses_total_weekly = fs_user.long_expense_list.total(times_per_year=52)
+  users[i].long_expenses_total_weekly = users[i].long_expense_list.total(times_per_year=52)
 ---
 id: long_expenses_total
-continue button field: fs_user.long_expenses_total
+continue button field: users[i].long_expenses_total
 question: |
   Weekly expenses total
 subquestion: |
-  Total weekly expenses: ${ currency(fs_user.long_expenses_total_weekly) }
+  Total weekly expenses: ${ currency(users[i].long_expenses_total_weekly) }
 
   You can still go back and edit any expense before you finish.
 ---
 code: |
-  if not fs_user.long_expenses_require_confirmation:
-    fs_user.confirm_no_expenses_long = False
+  if not users[i].long_expenses_require_confirmation:
+    users[i].confirm_no_expenses_long = False
 ---
 id: confirm_no_expenses_long_screen
-continue button field: fs_user.confirm_no_expenses_long_screen
+continue button field: users[i].confirm_no_expenses_long_screen
 question: |
   Confirm no expenses
 subquestion: |
@@ -570,153 +596,165 @@ subquestion: |
 
   Choose "Yes" only if you truly do not have household expenses to list.
 fields:
-  - Yes, I do not have household expenses to list right now: fs_user.confirm_no_expenses_long
+  - Yes, I do not have household expenses to list right now: users[i].confirm_no_expenses_long
     datatype: yesnoradio
     required: True
 ---
 code: |
-  fs_user.long_expenses_require_confirmation = fs_user.long_expenses_total_weekly == 0
+  users[i].long_expenses_require_confirmation = users[i].long_expenses_total_weekly == 0
 ---
 id: long_counsel_fees
 sets:
-  - fs_user.long_counsel_fees
+  - users[i].long_counsel_fees
 
-continue button field: fs_user.long_counsel_fees
+continue button field: users[i].long_counsel_fees
 question: |
   Counsel fees
 subquestion: |
   Fill out this section only if you have an attorney.
 
+  % if users.number_gathered() > 1:
+  If ${ bold(users[i].familiar(unique_names=users)) } does not have an attorney, you can leave every field on this page blank.
+  % else:
   If you do not have an attorney, you can leave every field on this page blank.
+  % endif
 fields:
-  - Retainer amount(s) paid to your attorney(s): fs_user.long_counsel_retainer
+  - Retainer amount(s) paid to your attorney(s): users[i].long_counsel_retainer
     datatype: currency
     required: False
-  - Legal fees incurred so far against retainer(s): fs_user.long_counsel_fees_incurred
+  - Legal fees incurred so far against retainer(s): users[i].long_counsel_fees_incurred
     datatype: currency
     required: False
-  - Anticipated total legal expense (minimum): fs_user.long_counsel_range_min
+  - Anticipated total legal expense (minimum): users[i].long_counsel_range_min
     datatype: currency
     required: False
-  - Anticipated total legal expense (maximum): fs_user.long_counsel_range_max
+  - Anticipated total legal expense (maximum): users[i].long_counsel_range_max
     datatype: currency
     required: False
 ---
 id: long_real_estate_primary
 sets:
-  - fs_user.long_real_estate_primary
+  - users[i].long_real_estate_primary
 
-continue button field: fs_user.long_real_estate_primary
+continue button field: users[i].long_real_estate_primary
 question: |
   Real estate - primary residence
 subquestion: |
+  % if users.number_gathered() > 1:
+  If ${ bold(users[i].familiar(unique_names=users)) } does not own real estate, you can leave these blank.
+  % else:
   If you do not own real estate, you can leave these blank.
+  % endif
 
   Use the best values you have for assessed value, market value, mortgage
   balances, and equity.
 fields:
-  - Street address: fs_user.long_primary_real_estate_address
+  - Street address: users[i].long_primary_real_estate_address
     required: False
-  - City/Town: fs_user.long_primary_real_estate_city
+  - City/Town: users[i].long_primary_real_estate_city
     required: False
-  - State: fs_user.long_primary_real_estate_state
+  - State: users[i].long_primary_real_estate_state
     default: MA
     required: False
-  - Title held in name of: fs_user.long_primary_real_estate_title
+  - Title held in name of: users[i].long_primary_real_estate_title
     required: False
-  - Purchase price: fs_user.long_primary_real_estate_purchase_price
+  - Purchase price: users[i].long_primary_real_estate_purchase_price
     datatype: currency
     required: False
-  - Year of purchase: fs_user.long_primary_real_estate_purchase_year
+  - Year of purchase: users[i].long_primary_real_estate_purchase_year
     datatype: integer
     required: False
-  - Current assessed value: fs_user.long_primary_real_estate_assessed_value
+  - Current assessed value: users[i].long_primary_real_estate_assessed_value
     datatype: currency
     required: False
-  - Date of last assessment: fs_user.long_primary_real_estate_assessment_date
+  - Date of last assessment: users[i].long_primary_real_estate_assessment_date
     datatype: date
     required: False
-  - Fair market value: fs_user.long_primary_real_estate_fmv
+  - Fair market value: users[i].long_primary_real_estate_fmv
     datatype: currency
     required: False
-  - Outstanding 1st mortgage: fs_user.long_primary_real_estate_first_mortgage
+  - Outstanding 1st mortgage: users[i].long_primary_real_estate_first_mortgage
     datatype: currency
     required: False
-  - Outstanding 2nd mortgage or home equity loan: fs_user.long_primary_real_estate_second_mortgage
+  - Outstanding 2nd mortgage or home equity loan: users[i].long_primary_real_estate_second_mortgage
     datatype: currency
     required: False
-  - Equity: fs_user.long_primary_real_estate_equity
+  - Equity: users[i].long_primary_real_estate_equity
     datatype: currency
     required: False
 ---
 id: long_real_estate_secondary
 sets:
-  - fs_user.long_real_estate_secondary
+  - users[i].long_real_estate_secondary
 
-continue button field: fs_user.long_real_estate_secondary
+continue button field: users[i].long_real_estate_secondary
 question: |
   Real estate - vacation or second home
 subquestion: |
+  % if users.number_gathered() > 1:
+  Leave blank if ${ bold(users[i].familiar(unique_names=users)) } does not own a vacation home or second property.
+  % else:
   Leave blank if you do not own a vacation home or second property.
+  % endif
 
   Use estimates if you do not have the exact values in front of you.
 fields:
-  - Street address: fs_user.long_secondary_real_estate_address
+  - Street address: users[i].long_secondary_real_estate_address
     required: False
-  - City/Town: fs_user.long_secondary_real_estate_city
+  - City/Town: users[i].long_secondary_real_estate_city
     required: False
-  - State: fs_user.long_secondary_real_estate_state
+  - State: users[i].long_secondary_real_estate_state
     default: MA
     required: False
-  - Title held in name of: fs_user.long_secondary_real_estate_title
+  - Title held in name of: users[i].long_secondary_real_estate_title
     required: False
-  - Purchase price: fs_user.long_secondary_real_estate_purchase_price
+  - Purchase price: users[i].long_secondary_real_estate_purchase_price
     datatype: currency
     required: False
-  - Year of purchase: fs_user.long_secondary_real_estate_purchase_year
+  - Year of purchase: users[i].long_secondary_real_estate_purchase_year
     datatype: integer
     required: False
-  - Current assessed value: fs_user.long_secondary_real_estate_assessed_value
+  - Current assessed value: users[i].long_secondary_real_estate_assessed_value
     datatype: currency
     required: False
-  - Date of last assessment: fs_user.long_secondary_real_estate_assessment_date
+  - Date of last assessment: users[i].long_secondary_real_estate_assessment_date
     datatype: date
     required: False
-  - Fair market value: fs_user.long_secondary_real_estate_fmv
+  - Fair market value: users[i].long_secondary_real_estate_fmv
     datatype: currency
     required: False
-  - Outstanding 1st mortgage: fs_user.long_secondary_real_estate_first_mortgage
+  - Outstanding 1st mortgage: users[i].long_secondary_real_estate_first_mortgage
     datatype: currency
     required: False
-  - Outstanding 2nd mortgage or home equity loan: fs_user.long_secondary_real_estate_second_mortgage
+  - Outstanding 2nd mortgage or home equity loan: users[i].long_secondary_real_estate_second_mortgage
     datatype: currency
     required: False
-  - Equity: fs_user.long_secondary_real_estate_equity
+  - Equity: users[i].long_secondary_real_estate_equity
     datatype: currency
     required: False
 ---
 code: |
   _long_re_primary = (
-    fs_safe_float(value("fs_user.long_primary_real_estate_equity"))
-    if defined("fs_user.long_primary_real_estate_equity")
-    and value("fs_user.long_primary_real_estate_equity") not in (None, "")
+    fs_safe_float(value("users[i].long_primary_real_estate_equity"))
+    if defined("users[i].long_primary_real_estate_equity")
+    and value("users[i].long_primary_real_estate_equity") not in (None, "")
     else 0.0
   )
   _long_re_secondary = (
-    fs_safe_float(value("fs_user.long_secondary_real_estate_equity"))
-    if defined("fs_user.long_secondary_real_estate_equity")
-    and value("fs_user.long_secondary_real_estate_equity") not in (None, "")
+    fs_safe_float(value("users[i].long_secondary_real_estate_equity"))
+    if defined("users[i].long_secondary_real_estate_equity")
+    and value("users[i].long_secondary_real_estate_equity") not in (None, "")
     else 0.0
   )
-  _long_vehicles = fs_sum_list_attr(fs_user.motor_vehicles, "equity") if defined("fs_user.motor_vehicles") else 0.0
+  _long_vehicles = fs_sum_list_attr(users[i].motor_vehicles, "equity") if defined("users[i].motor_vehicles") else 0.0
   _long_pensions = 0.0
-  if defined("fs_user.pensions"):
+  if defined("users[i].pensions"):
     _long_pensions = (
-      fs_sum_list_attr(fs_user.pensions, "defined_benefit_amount")
-      + fs_sum_list_attr(fs_user.pensions, "defined_contribution_amount")
+      fs_sum_list_attr(users[i].pensions, "defined_benefit_amount")
+      + fs_sum_list_attr(users[i].pensions, "defined_contribution_amount")
     )
-  _long_other = fs_sum_list_attr(fs_user.other_assets, "current_balance") if defined("fs_user.other_assets") else 0.0
-  fs_user.long_assets_total_value = currency(
+  _long_other = fs_sum_list_attr(users[i].other_assets, "current_balance") if defined("users[i].other_assets") else 0.0
+  users[i].long_assets_total_value = currency(
     _long_re_primary
     + _long_re_secondary
     + _long_vehicles
@@ -725,57 +763,65 @@ code: |
   )
 ---
 id: long_assets_total
-continue button field: fs_user.long_assets_total
+continue button field: users[i].long_assets_total
 question: |
   Assets summary
 subquestion: |
   Here is a quick summary of the assets you listed:
 
-  - **Motor vehicles:** ${ len(fs_user.motor_vehicles) if defined('fs_user.motor_vehicles') and fs_user.motor_vehicles.there_are_any else 0 }
-  - **Retirement plans:** ${ len(fs_user.pensions) if defined('fs_user.pensions') and fs_user.pensions.there_are_any else 0 }
-  - **Other assets:** ${ len(fs_user.other_assets) if defined('fs_user.other_assets') and fs_user.other_assets.there_are_any else 0 }
+  - **Motor vehicles:** ${ len(users[i].motor_vehicles) if defined('users[i].motor_vehicles') and users[i].motor_vehicles.there_are_any else 0 }
+  - **Retirement plans:** ${ len(users[i].pensions) if defined('users[i].pensions') and users[i].pensions.there_are_any else 0 }
+  - **Other assets:** ${ len(users[i].other_assets) if defined('users[i].other_assets') and users[i].other_assets.there_are_any else 0 }
 
   Use **Back** if you want to make changes before the form is generated.
 ---
 id: long_liabilities_total
-continue button field: fs_user.long_liabilities_total
+continue button field: users[i].long_liabilities_total
 question: |
   Liabilities summary
 subquestion: |
-  **Liabilities listed:** ${ len(fs_user.liabilities) if defined('fs_user.liabilities') and fs_user.liabilities.there_are_any else 0 }
+  **Liabilities listed:** ${ len(users[i].liabilities) if defined('users[i].liabilities') and users[i].liabilities.there_are_any else 0 }
 
-  Use **Back** if you want to add or edit debts before you finish.
+  Use **Back** if you want to add or edit debts before finishing.
 ---
 code: |
-  _long_liab_due = fs_sum_list_attr(fs_user.liabilities, "amount_due") if defined("fs_user.liabilities") else 0.0
-  _long_liab_weekly = fs_sum_list_attr(fs_user.liabilities, "weekly_payment") if defined("fs_user.liabilities") else 0.0
-  fs_user.long_liabilities_total_amount_due = currency(_long_liab_due)
-  fs_user.long_liabilities_total_weekly_payment = currency(_long_liab_weekly)
+  _long_liab_due = fs_sum_list_attr(users[i].liabilities, "amount_due") if defined("users[i].liabilities") else 0.0
+  _long_liab_weekly = fs_sum_list_attr(users[i].liabilities, "weekly_payment") if defined("users[i].liabilities") else 0.0
+  users[i].long_liabilities_total_amount_due = currency(_long_liab_due)
+  users[i].long_liabilities_total_weekly_payment = currency(_long_liab_weekly)
 ---
 id: long_certification
 sets:
-  - fs_user.long_certification
+  - users[i].long_certification
 
-continue button field: fs_user.long_certification
+continue button field: users[i].long_certification
 question: |
   Certification
 subquestion: |
   Sign to certify that the information you provided is true to the best of
+  % if users.number_gathered() > 1:
+  ${ bold(users[i].familiar(unique_names=users)) }'s knowledge.
+  % else:
   your knowledge.
+  % endif
 
+  % if users.number_gathered() > 1:
+  Enter ${ bold(users[i].familiar(unique_names=users)) }'s signature and the date the statement is being signed.
+  % else:
   Enter your signature and the date you are signing this statement.
+  % endif
 fields:
-  - Signature: fs_user.user_signature
+  - Signature: users[i].user_signature
     required: False
-  - Signature date: fs_user.user_signature_date
+  - Signature date: users[i].user_signature_date
     datatype: date
     required: False
 ---
 id: long_notary
 sets:
-  - fs_user.long_notary
+  - users[i].long_notary
 
-continue button field: fs_user.long_notary
+continue button field: users[i].long_notary
 question: |
   Notary
 subquestion: |
@@ -783,30 +829,30 @@ subquestion: |
 
   If the statement will be notarized later, leave this page blank for now.
 fields:
-  - Will you have this notarized now?: fs_user.will_notarize_now
+  - Will you have this notarized now?: users[i].will_notarize_now
     datatype: yesno
-  - County: fs_user.notary_county
+  - County: users[i].notary_county
     show if:
-      variable: fs_user.will_notarize_now
+      variable: users[i].will_notarize_now
 
       is: True
     required: False
-  - Date of appearance: fs_user.notary_appearance_date
+  - Date of appearance: users[i].notary_appearance_date
     show if:
-      variable: fs_user.will_notarize_now
+      variable: users[i].will_notarize_now
 
       is: True
     datatype: date
     required: False
-  - Notary public name: fs_user.notary_name
+  - Notary public name: users[i].notary_name
     show if:
-      variable: fs_user.will_notarize_now
+      variable: users[i].will_notarize_now
 
       is: True
     required: False
-  - Commission expires: fs_user.notary_commission_expires
+  - Commission expires: users[i].notary_commission_expires
     show if:
-      variable: fs_user.will_notarize_now
+      variable: users[i].will_notarize_now
 
       is: True
     required: False

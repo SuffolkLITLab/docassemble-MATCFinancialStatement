@@ -25,15 +25,64 @@ code: |
   nav.set_section("introduction")
   set_progress(5)
   fs_intro
+  set_financial_statement_party_labels
+  financial_statement_person_role
 
   financial_statement_selected_count
 
-  for user in users:
-    user.making_statement_for
-    if user.making_statement_for:
-      fs_user = user
-      fs_other_user = financial_statement_other_user(user)
-      user.financial_statement_complete
+  for i in range(len(users)):
+    users[i].making_statement_for
+    if users[i].making_statement_for:
+      if financial_statement_selected_count > 1:
+        users[i].financial_statement_start
+      nav.set_section("eligibility")
+      set_progress(15)
+      users[i].gross_annual_income
+      users[i].financial_form_type
+
+      nav.set_section("court_and_parties")
+      set_progress(25)
+      financial_statement_court_division
+      docket_number
+      users[0].name.first
+      users[1].name.first
+      users[i].fs_checkpoint_court_and_parties
+
+      nav.set_section("personal_information")
+      set_progress(35)
+      users[i].birthdate
+      users[i].phone_number
+      users[i].address.address
+      users[i].employer_name
+      if users[i].employer_name or users[i].job_title:
+        users[i].employer_address_street
+      users[i].has_health_insurance
+      users[i].fs_checkpoint_personal_information
+
+      nav.set_section("cadence")
+      set_progress(45)
+      users[i].financial_cadence_default
+
+      nav.set_section("income")
+      set_progress(55)
+      users[i].income_list.statement_user = users[i]
+      users[i].income_list.gathered
+      users[i].income_schedule_triggers
+
+      if users[i].has_self_employment_income:
+        users[i].schedule_a_sections
+      if users[i].has_rental_income:
+        users[i].schedule_b_sections
+      users[i].income_totals
+      users[i].income_explanation
+      if users[i].income_requires_confirmation:
+        users[i].confirm_no_income_screen
+      users[i].fs_checkpoint_income
+
+      if users[i].financial_form_type == "short":
+        users[i].short_form_sections
+      else:
+        users[i].long_form_sections
 
   nav.set_section("review")
   set_progress(95)
@@ -45,62 +94,6 @@ code: |
 
   interview_order_financial_statement = True
 ---
-generic object: Individual
-sets:
-  - x.financial_statement_complete
-code: |
-  fs_user = x
-  fs_other_user = financial_statement_other_user(x)
-  nav.set_section("eligibility")
-  set_progress(15)
-  fs_user.gross_annual_income
-  fs_user.financial_form_type
-
-  nav.set_section("court_and_parties")
-  set_progress(25)
-  financial_statement_court_division
-  docket_number
-  users[0].name.first
-  users[1].name.first
-  fs_user.fs_checkpoint_court_and_parties
-
-  nav.set_section("personal_information")
-  set_progress(35)
-  fs_user.birthdate
-  fs_user.phone_number
-  fs_user.address.address
-  fs_user.employer_name
-  if fs_user.employer_name or fs_user.job_title:
-    fs_user.employer_address_street
-  fs_user.has_health_insurance
-  fs_user.fs_checkpoint_personal_information
-
-  nav.set_section("cadence")
-  set_progress(45)
-  fs_user.financial_cadence_default
-
-  nav.set_section("income")
-  set_progress(55)
-  fs_user.income_list.gathered
-  fs_user.income_schedule_triggers
-
-  if fs_user.has_self_employment_income:
-    fs_user.schedule_a_sections
-  if fs_user.has_rental_income:
-    fs_user.schedule_b_sections
-  fs_user.income_totals
-  fs_user.income_explanation
-  if fs_user.income_requires_confirmation:
-    fs_user.confirm_no_income_screen
-  fs_user.fs_checkpoint_income
-
-  if fs_user.financial_form_type == "short":
-    fs_user.short_form_sections
-  else:
-    fs_user.long_form_sections
-
-  x.financial_statement_complete = True
----
 initial: True
 code: |
   def financial_statement_other_user(statement_user):
@@ -110,28 +103,55 @@ code: |
     return users[1] if statement_user is users[0] else users[0]
 ---
 code: |
+  users[0].party_label = "Party A / Petitioner"
+  users[1].party_label = "Party B / Defendant"
+  set_financial_statement_party_labels = True
+---
+id: financial_statement_person_role
+question: |
+  What is your role in this case?
+subquestion: |
+  If you are not sure, choose **Party A / Petitioner**.
+fields:
+  - no label: financial_statement_person_role
+    datatype: radio
+    default: party_a
+    choices:
+      - Party A / Petitioner: party_a
+      - Party B / Defendant: party_b
+---
+code: |
   financial_statement_selected_count = sum(1 for user in users if user.making_statement_for)
 ---
 id: financial statement spouses
 question: |
   Whose financial statement do you want to prepare?
 fields:
-  - ${ users[0] }: users[0].making_statement_for
+  - Party A / Petitioner: users[0].making_statement_for
     datatype: yesno
-    default: True
-  - ${ users[1] }: users[1].making_statement_for
+    default: ${ financial_statement_person_role == "party_a" }
+  - Party B / Defendant: users[1].making_statement_for
     datatype: yesno
-    default: False
+    default: ${ financial_statement_person_role == "party_b" }
 validation code: |
   if not users[0].making_statement_for and not users[1].making_statement_for:
     validation_error("Select at least one spouse to prepare a financial statement for.")
 ---
+id: financial_statement_start
+continue button field: users[i].financial_statement_start
+question: |
+  % if financial_statement_selected_count > 1:
+  We will start with the financial statement for ${ bold(users[i].familiar(unique_names=users)) }.
+  % else:
+  We will start with your financial statement.
+  % endif
+---
 id: financial_form_type
 code: |
-  if fs_user.gross_annual_income >= 75000:
-    fs_user.financial_form_type = "long"
+  if users[i].gross_annual_income >= 75000:
+    users[i].financial_form_type = "long"
   else:
-    fs_user.financial_form_type = "short"
+    users[i].financial_form_type = "short"
 ---
 initial: True
 code: |
@@ -183,7 +203,7 @@ code: |
 
   def _income_weekly(source_key):
     try:
-      return fs_user.income_list.total(times_per_year=52, source=source_key)
+      return users[i].income_list.total(times_per_year=52, source=source_key)
     except:
       return 0
 
@@ -193,7 +213,7 @@ code: |
   def _income_descriptions(source_key):
     try:
       descriptions = []
-      for item in fs_user.income_list.matches(source_key):
+      for item in users[i].income_list.matches(source_key):
         description = fs_text_or_default(item.description if hasattr(item, "description") else "")
         if description:
           descriptions.append(description)
@@ -206,13 +226,13 @@ code: |
   def _to_weekly_safe(var_name):
     try:
       amt = value(var_name) if defined(var_name) else 0
-      return to_weekly(amt, fs_user.financial_cadence_default) if amt else 0
+      return to_weekly(amt, users[i].financial_cadence_default) if amt else 0
     except:
       return 0
 
   def _short_expense_weekly(source_key):
     try:
-      return fs_user.expense_list.total(times_per_year=52, source=source_key)
+      return users[i].expense_list.total(times_per_year=52, source=source_key)
     except:
       return 0
 
@@ -230,10 +250,10 @@ code: |
     return "; ".join(descriptions)
 ---
 sets:
-  - fs_user.short_expense_other_description
+  - users[i].short_expense_other_description
 
 code: |
-  fs_user.short_expense_other_description = fs_expense_descriptions(fs_user.expense_list, "other")
+  users[i].short_expense_other_description = fs_expense_descriptions(users[i].expense_list, "other")
 ---
 attachment:
   name: fs_short
@@ -251,8 +271,8 @@ attachment:
     - "docket_number_p3": ${ docket_number }
     - "trial_court_division_p4": ${ fs_showifdef_or_default('financial_statement_court_division') or (trial_court.division if hasattr(trial_court, 'division') else '') }
     - "docket_number_p4": ${ docket_number }
-    - "plaintiff_petitioner_name": ${ users[i] }
-    - "defendant_petitioner_name": ${ financial_statement_other_user(users[i]) }
+    - "plaintiff_petitioner_name": ${ users[0] }
+    - "defendant_petitioner_name": ${ users[1] }
     # Section 1: Personal Information
     - "user_name": ${ users[i] }
     - "user_ssn": ${ showifdef('users[i].ssn') }
@@ -428,7 +448,7 @@ initial: True
 code: |
   def _long_expense_weekly(source_key):
     try:
-      return fs_user.long_expense_list.total(times_per_year=52, source=source_key)
+      return users[i].long_expense_list.total(times_per_year=52, source=source_key)
     except:
       return 0
 ---
@@ -436,7 +456,7 @@ initial: True
 code: |
   def _schedule_a_expense_monthly(source_key):
     try:
-      return fs_user.schedule_a_expenses.total(times_per_year=12, source=source_key)
+      return users[i].schedule_a_expenses.total(times_per_year=12, source=source_key)
     except:
       return 0
 ---
@@ -445,7 +465,7 @@ code: |
   def _schedule_a_expense_descriptions(source_key):
     try:
       descriptions = []
-      for item in fs_user.schedule_a_expenses.matches(source_key):
+      for item in users[i].schedule_a_expenses.matches(source_key):
         description = fs_text_or_default(item.description if hasattr(item, "description") else "")
         if description:
           descriptions.append(description)
@@ -457,7 +477,7 @@ initial: True
 code: |
   def _schedule_b_expense_annual(source_key):
     try:
-      return fs_user.schedule_b_expenses.total(times_per_year=1, source=source_key)
+      return users[i].schedule_b_expenses.total(times_per_year=1, source=source_key)
     except:
       return 0
 ---
@@ -466,7 +486,7 @@ code: |
   def _schedule_b_expense_descriptions(source_key):
     try:
       descriptions = []
-      for item in fs_user.schedule_b_expenses.matches(source_key):
+      for item in users[i].schedule_b_expenses.matches(source_key):
         description = fs_text_or_default(item.description if hasattr(item, "description") else "")
         if description:
           descriptions.append(description)
@@ -500,8 +520,8 @@ attachment:
     - "docket_number_p8": ${ docket_number }
     - "trial_court_division_p9": ${ fs_showifdef_or_default('financial_statement_court_division') or (trial_court.division if hasattr(trial_court, 'division') else '') }
     - "docket_number_p9": ${ docket_number }
-    - "plaintiff_petitioner_name": ${ users[i] }
-    - "defendant_petitioner_name": ${ financial_statement_other_user(users[i]) }
+    - "plaintiff_petitioner_name": ${ users[0] }
+    - "defendant_petitioner_name": ${ users[1] }
     # Section I: Personal Information
     - "user_name": ${ users[i] }
     - "user_ssn": ${ showifdef('users[i].ssn') }
