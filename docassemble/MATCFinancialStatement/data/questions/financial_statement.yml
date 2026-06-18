@@ -1,6 +1,7 @@
 ---
 modules:
   - docassemble.base.util
+  - .financial_statement_helpers
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
@@ -90,17 +91,8 @@ code: |
 
   nav.set_section("download")
   set_progress(100)
-  fs_download
 
   interview_order_financial_statement = True
----
-initial: True
-code: |
-  def financial_statement_other_user(statement_user):
-    for user in users:
-      if user is not statement_user:
-        return user
-    return users[1] if statement_user is users[0] else users[0]
 ---
 code: |
   users[0].party_label = "Party A / Petitioner"
@@ -152,102 +144,6 @@ code: |
     users[i].financial_form_type = "long"
   else:
     users[i].financial_form_type = "short"
----
-initial: True
-code: |
-  def _fs_elements(items):
-    elements = getattr(items, "elements", items)
-    return elements.values() if isinstance(elements, dict) else elements
-
-  def _fs_item_total(item, times_per_year):
-    try:
-      return item.total(times_per_year=times_per_year) if hasattr(item, "total") else 0
-    except Exception:
-      item_value = fs_item_value(item, "value")
-      if item_value in (None, ""):
-        return 0
-      item_times_per_year = fs_item_value(item, "times_per_year")
-      if item_times_per_year in (None, ""):
-        item_times_per_year = times_per_year
-      return fs_safe_float(item_value) * fs_safe_float(item_times_per_year) / times_per_year
-
-  def _fs_item_matches_source(item, source_key):
-    return fs_text_or_default(fs_item_value(item, "source")) == source_key
-
-  def _fs_item_description(item):
-    return fs_text_or_default(fs_item_value(item, "description"))
-
-  def _fs_list_prefixes(list_name, max_items=100):
-    for index in range(max_items):
-      prefix = f"{list_name}[{index}]"
-      if defined(f"{prefix}.source"):
-        yield prefix
-
-  def _fs_prefixed_total(list_name, source_key, times_per_year):
-    total = 0
-    for prefix in _fs_list_prefixes(list_name):
-      if fs_text_or_default(value(f"{prefix}.source")) == source_key:
-        item_value = value(f"{prefix}.value") if defined(f"{prefix}.value") else 0
-        item_times_per_year = value(f"{prefix}.times_per_year") if defined(f"{prefix}.times_per_year") else times_per_year
-        total += fs_safe_float(item_value) * fs_safe_float(item_times_per_year) / times_per_year
-    return total
-
-  def _fs_prefixed_descriptions(list_name, source_key):
-    descriptions = []
-    for prefix in _fs_list_prefixes(list_name):
-      if fs_text_or_default(value(f"{prefix}.source")) == source_key:
-        description = fs_text_or_default(value(f"{prefix}.description") if defined(f"{prefix}.description") else "")
-        if description:
-          descriptions.append(description)
-    return "; ".join(descriptions)
-
-  def _income_weekly(source_key):
-    try:
-      return users[i].income_list.total(times_per_year=52, source=source_key)
-    except:
-      return 0
-
----
-initial: True
-code: |
-  def _income_descriptions(source_key):
-    try:
-      descriptions = []
-      for item in users[i].income_list.matches(source_key):
-        description = fs_text_or_default(item.description if hasattr(item, "description") else "")
-        if description:
-          descriptions.append(description)
-    except Exception:
-      return ""
-    return "; ".join(descriptions)
----
-initial: True
-code: |
-  def _to_weekly_safe(var_name):
-    try:
-      amt = value(var_name) if defined(var_name) else 0
-      return to_weekly(amt, users[i].financial_cadence_default) if amt else 0
-    except:
-      return 0
-
-  def _short_expense_weekly(source_key):
-    try:
-      return users[i].expense_list.total(times_per_year=52, source=source_key)
-    except:
-      return 0
-
-  def fs_expense_descriptions(items, source_key):
-    try:
-      descriptions = []
-      for item in items:
-        if fs_item_value(item, "source") != source_key:
-          continue
-        description = fs_text_or_default(fs_item_value(item, "description"))
-        if description:
-          descriptions.append(description)
-    except Exception:
-      return ""
-    return "; ".join(descriptions)
 ---
 sets:
   - users[i].short_expense_other_description
@@ -443,56 +339,6 @@ attachment:
     - "attorney_address_zip": ""
     - "attorney_phone": ${ showifdef('users[i].attorney_phone') }
     - "attorney_bbo": ${ showifdef('users[i].attorney_bbo') }
----
-initial: True
-code: |
-  def _long_expense_weekly(source_key):
-    try:
-      return users[i].long_expense_list.total(times_per_year=52, source=source_key)
-    except:
-      return 0
----
-initial: True
-code: |
-  def _schedule_a_expense_monthly(source_key):
-    try:
-      return users[i].schedule_a_expenses.total(times_per_year=12, source=source_key)
-    except:
-      return 0
----
-initial: True
-code: |
-  def _schedule_a_expense_descriptions(source_key):
-    try:
-      descriptions = []
-      for item in users[i].schedule_a_expenses.matches(source_key):
-        description = fs_text_or_default(item.description if hasattr(item, "description") else "")
-        if description:
-          descriptions.append(description)
-    except Exception:
-      return ""
-    return "; ".join(descriptions)
----
-initial: True
-code: |
-  def _schedule_b_expense_annual(source_key):
-    try:
-      return users[i].schedule_b_expenses.total(times_per_year=1, source=source_key)
-    except:
-      return 0
----
-initial: True
-code: |
-  def _schedule_b_expense_descriptions(source_key):
-    try:
-      descriptions = []
-      for item in users[i].schedule_b_expenses.matches(source_key):
-        description = fs_text_or_default(item.description if hasattr(item, "description") else "")
-        if description:
-          descriptions.append(description)
-    except Exception:
-      return ""
-    return "; ".join(descriptions)
 ---
 attachment:
   name: fs_long
