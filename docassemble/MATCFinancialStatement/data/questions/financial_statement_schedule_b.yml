@@ -36,34 +36,45 @@ data:
 ---
 id: schedule_b_sections
 sets:
-  - schedule_b_sections
+  - users[i].schedule_b_sections
+
 code: |
-  schedule_b_intro
-  schedule_b_rent_received
-  schedule_b_expenses_list
-  schedule_b_expenses.gather()
-  schedule_b_expense_totals
-  schedule_b_weekly_income
-  schedule_b_sections = True
+  users[i].schedule_b_intro
+  users[i].schedule_b_rent_received
+  users[i].schedule_b_expenses_list
+  users[i].schedule_b_expenses.statement_user = users[i]
+  users[i].schedule_b_expenses.gather()
+  users[i].schedule_b_expense_totals
+  users[i].schedule_b_weekly_income
+  users[i].schedule_b_sections = True
 ---
 id: schedule_b_intro
-continue button field: schedule_b_intro
+continue button field: users[i].schedule_b_intro
 question: |
   Schedule B: rental income
 subquestion: |
+  % if users.number_gathered() > 1:
+  ${ bold(users[i].familiar(unique_names=users)) } indicated rental income.
+  % else:
   You indicated that you have rental income.
+  % endif
   This schedule asks for rental income and rental expenses.
 ---
 id: schedule_b_rent_received
 sets:
-  - schedule_b_rent_received
-continue button field: schedule_b_rent_received
+  - users[i].schedule_b_rent_received
+
+continue button field: users[i].schedule_b_rent_received
 question: |
   Annual rent
 subquestion: |
+  % if users.number_gathered() > 1:
+  Enter the total rent ${ bold(users[i].familiar(unique_names=users)) } gets in a typical year before expenses.
+  % else:
   Enter the total rent you get in a typical year before expenses.
+  % endif
 fields:
-  - Annual rent: schedule_b_annual_rent_received
+  - Annual rent: users[i].schedule_b_annual_rent_received
     datatype: currency
     required: False
     help: |
@@ -71,51 +82,58 @@ fields:
 ---
 id: schedule_b_expenses_list
 sets:
-  - schedule_b_expenses_list
-continue button field: schedule_b_expenses_list
+  - users[i].schedule_b_expenses_list
+
+continue button field: users[i].schedule_b_expenses_list
 question: |
   Annual rental expenses
 subquestion: |
   Add each expense line item and its annual amount. If you are not sure,
   give your best estimate.
 fields:
-  - Do you have rental expenses to list?: schedule_b_expenses.there_are_any
+  - label: |
+      % if users.number_gathered() > 1:
+      Does ${ bold(users[i].familiar(unique_names=users)) } have rental expenses to list?
+      % else:
+      Do you have rental expenses to list?
+      % endif
+    field: users[i].schedule_b_expenses.there_are_any
     datatype: yesno
 ---
 id: schedule_b_expense_item
-generic object: schedule_b_expenses
 question: |
   Rental expense
 subquestion: |
   Enter the annual amount for this category.
 fields:
-  - Expense category: schedule_b_expenses[i].source
+  - Expense category: users[i].schedule_b_expenses[j].source
     code: |
       schedule_b_expense_choices
-  - Expense description (if needed): schedule_b_expenses[i].description
+  - Expense description (if needed): users[i].schedule_b_expenses[j].description
     required: False
-  - Annual amount: schedule_b_expenses[i].value
+  - Annual amount: users[i].schedule_b_expenses[j].value
     datatype: currency
     required: False
     help: |
       Enter the total amount you pay in a typical year for this category.
 ---
 code: |
-  schedule_b_expenses[i].times_per_year = 1
-  schedule_b_expenses[i].display_name = dict(schedule_b_expense_choices).get(
-    schedule_b_expenses[i].source, schedule_b_expenses[i].source
+  users[i].schedule_b_expenses[j].times_per_year = 1
+  users[i].schedule_b_expenses[j].display_name = dict(schedule_b_expense_choices).get(
+    users[i].schedule_b_expenses[j].source,
+    users[i].schedule_b_expenses[j].source,
   )
-  schedule_b_expenses[i].complete = True
+  users[i].schedule_b_expenses[j].complete = True
 ---
 code: |
-  if defined("schedule_b_expenses.there_are_any"):
-    if schedule_b_expenses.there_are_any:
-      for expense in schedule_b_expenses.elements:
+  if defined("users[i].schedule_b_expenses.there_are_any"):
+    if users[i].schedule_b_expenses.there_are_any:
+      for expense in users[i].schedule_b_expenses.elements:
         expense.value
-    schedule_b_expenses.revisit = True
+    users[i].schedule_b_expenses.revisit = True
 ---
-table: schedule_b_expenses.table
-rows: schedule_b_expenses
+table: users[i].schedule_b_expenses.table
+rows: users[i].schedule_b_expenses
 columns:
   - Expense: |
       row_item.display_name if hasattr(row_item, "display_name") else row_item.source
@@ -123,23 +141,30 @@ columns:
       currency(row_item.total(times_per_year=1))
 edit:
   - source
+
   - description
+
   - value
+
 ---
 id: schedule_b_expenses_revisit
-continue button field: schedule_b_expenses.revisit
+continue button field: users[i].schedule_b_expenses.revisit
 question: |
   Edit rental expenses
 subquestion: |
-  % if defined("schedule_b_expenses.there_are_any") and schedule_b_expenses.there_are_any and len(schedule_b_expenses):
-  ${ schedule_b_expenses.table }
+  % if defined("users[i].schedule_b_expenses.there_are_any") and users[i].schedule_b_expenses.there_are_any and len(users[i].schedule_b_expenses):
+  ${ users[i].schedule_b_expenses.table }
+  % else:
+  % if users.number_gathered() > 1:
+  ${ bold(users[i].familiar(unique_names=users)) } has not added any rental expenses yet.
   % else:
   You have not added any rental expenses yet.
+  % endif
   % endif
 
   Use "Add another" if you need to add an expense now.
 
-  ${ schedule_b_expenses.add_action() }
+  ${ users[i].schedule_b_expenses.add_action() }
 ---
 id: schedule_b_expenses_more
 question: |
@@ -147,28 +172,34 @@ question: |
 subquestion: |
   Check this box only if you have another rental expense to add.
 fields:
-  - Do you have another rental expense to add?: schedule_b_expenses.there_is_another
+  - label: |
+      % if users.number_gathered() > 1:
+      Does ${ bold(users[i].familiar(unique_names=users)) } have another rental expense to add?
+      % else:
+      Do you have another rental expense to add?
+      % endif
+    field: users[i].schedule_b_expenses.there_is_another
     datatype: yesno
 ---
 code: |
-  schedule_b_total_annual_expenses = float(schedule_b_expenses.total(times_per_year=1))
+  users[i].schedule_b_total_annual_expenses = float(users[i].schedule_b_expenses.total(times_per_year=1))
 ---
 id: schedule_b_expense_totals
-continue button field: schedule_b_expense_totals
+continue button field: users[i].schedule_b_expense_totals
 question: |
   Annual expense total
 subquestion: |
-  ${ currency(schedule_b_total_annual_expenses) }
+  ${ currency(users[i].schedule_b_total_annual_expenses) }
 ---
 code: |
-  schedule_b_weekly_rental_income = (
-    (float(value("schedule_b_annual_rent_received") or 0) - schedule_b_total_annual_expenses) / 52
+  users[i].schedule_b_weekly_rental_income = (
+    (float(value("users[i].schedule_b_annual_rent_received") or 0) - users[i].schedule_b_total_annual_expenses) / 52
   )
 ---
 id: schedule_b_weekly_income
-continue button field: schedule_b_weekly_income
+continue button field: users[i].schedule_b_weekly_income
 question: |
   Weekly rental income
 subquestion: |
   Weekly rental income = (annual rent - annual expenses) divided by 52
-  ${ currency(schedule_b_weekly_rental_income) }
+  ${ currency(users[i].schedule_b_weekly_rental_income) }

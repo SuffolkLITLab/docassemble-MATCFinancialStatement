@@ -1,0 +1,101 @@
+---
+include:
+  - financial_statement.yml
+---
+initial: True
+code: |
+  interview_short_title = "Financial Statement (MA Probate and Family Court)"
+---
+initial: True
+code: |
+  allowed_courts = ["Probate and Family Court"]
+---
+objects:
+  - users: ALPeopleList.using(target_number=2)
+  - trial_court: MACourt
+---
+code: |
+  for user in users:
+    user.financial_statement_short_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.financial_form_type")
+      and user.financial_form_type == "short"
+    )
+    user.financial_statement_long_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.financial_form_type")
+      and user.financial_form_type == "long"
+    )
+    user.financial_statement_schedule_a_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.has_self_employment_income")
+      and user.has_self_employment_income
+    )
+    user.financial_statement_schedule_b_attachment.enabled = (
+      defined(f"{user.instanceName}.making_statement_for")
+      and user.making_statement_for
+      and defined(f"{user.instanceName}.has_rental_income")
+      and user.has_rental_income
+    )
+---
+metadata:
+  title: |
+    Financial Statement (MA Probate and Family Court)
+  short title: |
+    Financial Statement
+  description: |
+    This interview helps you prepare a Massachusetts financial statement for Probate and Family Court.
+    You will answer questions about your income, expenses, assets, and debts.
+  before_you_start: |
+    Before you begin, gather what you have available:
+    - Recent pay stubs or benefit letters
+    - Recent bills and recurring expense statements
+    - Account balances for assets and debts
+
+    If you are not sure of an amount, use your best good-faith estimate.
+
+    If you see a green phrase like "gross annual income," tap it to see a definition.
+  estimated_completion_minutes: 30
+  estimated_completion_delta: 10
+  LIST_topics:
+    - Family law
+    - Financial disclosure
+  authors:
+    - Court Forms Online
+  jurisdiction: NAM-US-US+MA
+  landing_page_url: https://courtformsonline.org/
+  typical_role: plaintiff
+  maturity: draft
+---
+code: |
+  enable_al_nav_sections = True
+  al_nav_sections = [
+    {"introduction": "Introduction"},
+    {"eligibility": "Eligibility"},
+    {"court_and_parties": "Court and parties"},
+    {"personal_information": "Personal information"},
+    {"cadence": "Cadence"},
+    {"income": "Income"},
+    {"deductions": "Deductions"},
+    {"expenses": "Expenses"},
+    {"assets": "Assets"},
+    {"liabilities": "Liabilities"},
+    {"review": "Review"},
+    {"download": "Download"},
+  ]
+---
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for the court", enabled=True)
+---
+sections:
+  - review_fs: Review your answers
+---
+mandatory: True
+code: |
+  al_intro_screen
+  interview_order_financial_statement
+  fs_download
