@@ -53,9 +53,9 @@ setup(
     packages=find_namespace_packages(include=["docassemble*"]),
     install_requires=[
         "docassemble.ALMassachusetts>=0.1.2",
-        "docassemble.AssemblyLine @ git+https://github.com/SuffolkLITLab/docassemble-AssemblyLine.git@main",
-        "docassemble.MassAccess @ git+https://github.com/SuffolkLITLab/docassemble-MassAccess.git@main",
-        "docassemble.ALToolbox @ git+https://github.com/SuffolkLITLab/docassemble-ALToolbox.git@main",
+        "docassemble.AssemblyLine",
+        "docassemble.MassAccess",
+        "docassemble.ALToolbox",
     ],
     zip_safe=False,
     package_data=find_package_data(
