@@ -31,9 +31,11 @@ code: |
 
   financial_statement_selected_count
 
+  financial_statement_review_user_index = None
   for i in range(len(users)):
     users[i].making_statement_for
     if users[i].making_statement_for:
+      financial_statement_review_user_index = i
       if financial_statement_selected_count > 1:
         users[i].financial_statement_start
       nav.set_section("eligibility")
@@ -87,7 +89,8 @@ code: |
 
   nav.set_section("review")
   set_progress(95)
-  fs_review
+  i = financial_statement_review_user_index
+  financial_statement_review_complete
 
   nav.set_section("download")
   set_progress(100)
