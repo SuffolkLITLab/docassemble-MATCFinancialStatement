@@ -1540,7 +1540,7 @@ buttons:
   Resume: continue
 ---
 id: fs_review
-continue button field: fs_review
+continue button field: financial_statement_review_complete
 question: |
   Review by section
 subquestion: |
