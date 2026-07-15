@@ -1952,7 +1952,7 @@ fields:
     required: False
   - Date incurred: users[i].liabilities[i].date_incurred
     required: False
-  - Amount due: users[i].liabilities[i].amount_due
+  - Total amount owed: users[i].liabilities[i].amount_due
     datatype: currency
     required: False
   - Weekly payment: users[i].liabilities[i].weekly_payment
@@ -1979,7 +1979,7 @@ rows: users[i].liabilities
 columns:
   - Liability: |
       fs_liability_label(row_item)
-  - Amount due: |
+  - Total amount owed: |
       fs_currency_zero(fs_item_value(row_item, "amount_due"))
   - Weekly payment: |
       fs_currency_zero(fs_item_value(row_item, "weekly_payment"))
