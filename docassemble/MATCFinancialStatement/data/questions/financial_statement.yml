@@ -15,10 +15,10 @@ include:
   - financial_statement_schedule_b.yml
 ---
 objects:
-  - users[i].financial_statement_short_attachment: ALDocument.using(title="Financial Statement (Short Form)", filename="financial_statement_short", has_addendum=False)
-  - users[i].financial_statement_long_attachment: ALDocument.using(title="Financial Statement (Long Form)", filename="financial_statement_long", has_addendum=False)
-  - users[i].financial_statement_schedule_a_attachment: ALDocument.using(title="Schedule A - Self-Employment Income", filename="financial_statement_schedule_a", has_addendum=False)
-  - users[i].financial_statement_schedule_b_attachment: ALDocument.using(title="Schedule B - Rental Income", filename="financial_statement_schedule_b", has_addendum=False)
+  - users[i].financial_statement_short_attachment: ALDocument.using(title="Financial Statement (Short Form)", filename="financial_statement_short", has_addendum=False, enabled=True)
+  - users[i].financial_statement_long_attachment: ALDocument.using(title="Financial Statement (Long Form)", filename="financial_statement_long", has_addendum=False, enabled=True)
+  - users[i].financial_statement_schedule_a_attachment: ALDocument.using(title="Schedule A - Self-Employment Income", filename="financial_statement_schedule_a", has_addendum=False, enabled=True)
+  - users[i].financial_statement_schedule_b_attachment: ALDocument.using(title="Schedule B - Rental Income", filename="financial_statement_schedule_b", has_addendum=False, enabled=True)
 ---
 id: interview_order_financial_statement
 code: |

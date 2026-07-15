@@ -14,33 +14,6 @@ objects:
   - users: ALPeopleList.using(target_number=2)
   - trial_court: MACourt
 ---
-code: |
-  for user in users:
-    user.financial_statement_short_attachment.enabled = (
-      defined(f"{user.instanceName}.making_statement_for")
-      and user.making_statement_for
-      and defined(f"{user.instanceName}.financial_form_type")
-      and user.financial_form_type == "short"
-    )
-    user.financial_statement_long_attachment.enabled = (
-      defined(f"{user.instanceName}.making_statement_for")
-      and user.making_statement_for
-      and defined(f"{user.instanceName}.financial_form_type")
-      and user.financial_form_type == "long"
-    )
-    user.financial_statement_schedule_a_attachment.enabled = (
-      defined(f"{user.instanceName}.making_statement_for")
-      and user.making_statement_for
-      and defined(f"{user.instanceName}.has_self_employment_income")
-      and user.has_self_employment_income
-    )
-    user.financial_statement_schedule_b_attachment.enabled = (
-      defined(f"{user.instanceName}.making_statement_for")
-      and user.making_statement_for
-      and defined(f"{user.instanceName}.has_rental_income")
-      and user.has_rental_income
-    )
----
 metadata:
   title: |
     Financial Statement (MA Probate and Family Court)
@@ -87,9 +60,22 @@ code: |
     {"download": "Download"},
   ]
 ---
+code: |
+  financial_statement_attachments = []
+  for user in users:
+    if user.making_statement_for:
+      if user.financial_form_type == "short":
+        financial_statement_attachments.append(user.financial_statement_short_attachment)
+      else:
+        financial_statement_attachments.append(user.financial_statement_long_attachment)
+      if user.has_self_employment_income:
+        financial_statement_attachments.append(user.financial_statement_schedule_a_attachment)
+      if user.has_rental_income:
+        financial_statement_attachments.append(user.financial_statement_schedule_b_attachment)
+---
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for your records", enabled=True)
-  - al_court_bundle: ALDocumentBundle.using(elements=[users[0].financial_statement_short_attachment, users[0].financial_statement_long_attachment, users[0].financial_statement_schedule_a_attachment, users[0].financial_statement_schedule_b_attachment, users[1].financial_statement_short_attachment, users[1].financial_statement_long_attachment, users[1].financial_statement_schedule_a_attachment, users[1].financial_statement_schedule_b_attachment], filename="financial_statement", title="All financial statement forms for the court", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=financial_statement_attachments, filename="financial_statement", title="All financial statement forms for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=financial_statement_attachments, filename="financial_statement", title="All financial statement forms for the court", enabled=True)
 ---
 sections:
   - review_fs: Review your answers
