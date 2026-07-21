@@ -458,8 +458,7 @@ question: |
   Address for you
   % endif
 subquestion: |
-  Use the current mailing address.
-  If mail is received somewhere else, enter the address where court mail should go.
+  Enter the street address where this person currently lives.
 fields:
   - Street address: users[i].address.address
     address autocomplete: True
