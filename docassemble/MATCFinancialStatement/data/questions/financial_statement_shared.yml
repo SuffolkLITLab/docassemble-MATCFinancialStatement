@@ -1944,6 +1944,9 @@ subquestion: |
 
   Examples: credit card debt, personal loans, car loans, tax debt, or unpaid
   medical bills.
+
+  Enter the amount you actually pay each week. If you make monthly payments,
+  divide the monthly payment by 4.33.
 fields:
   - Creditor: users[i].liabilities[i].creditor
     required: False
