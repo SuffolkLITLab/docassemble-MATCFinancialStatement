@@ -276,6 +276,11 @@ subquestion: |
   Use your chosen cadence (${ users[i].financial_cadence_default }).
   These are amounts withheld from your gross pay.
 
+  Withholding is tax already taken from your pay. Estimated payments are tax
+  payments you send directly. An allowance is the number claimed on your tax
+  withholding form; leave it blank if you do not know it. FICA and Medicare
+  are payroll taxes.
+
   ${ collapse_template(fs_estimate_help) }
 fields:
   - Federal tax withholding/estimated payments: users[i].long_deduction_federal
