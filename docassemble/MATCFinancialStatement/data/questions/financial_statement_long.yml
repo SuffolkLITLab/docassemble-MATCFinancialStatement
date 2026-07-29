@@ -812,6 +812,7 @@ subquestion: |
   % endif
 fields:
   - Signature: users[i].user_signature
+    datatype: signature
     required: False
   - Signature date: users[i].user_signature_date
     datatype: date
