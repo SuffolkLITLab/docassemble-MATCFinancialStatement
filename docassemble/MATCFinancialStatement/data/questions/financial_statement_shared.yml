@@ -1585,8 +1585,8 @@ subquestion: |
   If you are e-filing, gather any supporting documents the court expects before
   you submit your packet.
 
-  Empty dollar fields show $0 on the completed form. Optional text and count
-  fields stay blank unless the information applies.
+  Empty dollar fields show $0 on the completed form. Review other unused lines
+  before filing and enter “None” where the court form calls for an answer.
 
   % if defined("income_explanation_note") and income_explanation_note:
   **Income explanation note**
