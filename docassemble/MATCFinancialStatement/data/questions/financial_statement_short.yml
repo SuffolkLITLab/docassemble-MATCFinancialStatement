@@ -69,7 +69,9 @@ subquestion: |
   Use your chosen cadence (${ users[i].financial_cadence_default }).
   These are amounts withheld from your gross pay.
 
-  **Examples:** federal tax, state tax, FICA, union dues.
+  Federal and state withholding are income taxes already taken from your pay.
+  FICA and Medicare are payroll taxes. An exemption is the number claimed on
+  your tax withholding form; leave it blank if you do not know it.
 fields:
   - Federal income tax deductions: users[i].short_deduction_federal
     datatype: currency

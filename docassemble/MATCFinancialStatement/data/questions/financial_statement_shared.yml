@@ -144,6 +144,7 @@ data: !!omap
 objects:
   - users[i].income_list: ALIncomeList.using(complete_attribute="complete", auto_gather=False)
   - users[i].expense_list: ALExpenseList.using(auto_gather=False)
+  - users[i].employer_address: Address
   - fs_income_terms_ordered: DAOrderedDict.using(elements=fs_income_terms, auto_gather=False, gathered=True)
   - fs_expense_terms_ordered: DAOrderedDict.using(elements=fs_expense_terms, auto_gather=False, gathered=True)
   - fs_income_checkbox_terms_ordered: DAOrderedDict.using(elements=fs_income_checkbox_terms, auto_gather=False, gathered=True)
@@ -505,22 +506,30 @@ subquestion: |
 
   These fields are optional. Leave anything blank if you do not know it.
 fields:
-  - Street address: users[i].employer_address_street
+  - Street address: users[i].employer_address.address
     address autocomplete: True
     required: False
-  - City/Town: users[i].employer_address_city
+    default: ${ users[i].employer_address_street if defined('users[i].employer_address_street') else '' }
+  - City/Town: users[i].employer_address.city
     required: False
-  - State: users[i].employer_address_state
-    default: MA
+    default: ${ users[i].employer_address_city if defined('users[i].employer_address_city') else '' }
+  - State: users[i].employer_address.state
+    default: ${ users[i].employer_address_state if defined('users[i].employer_address_state') else 'MA' }
     required: False
-  - ZIP: users[i].employer_address_zip
+  - ZIP: users[i].employer_address.zip
     required: False
+    default: ${ users[i].employer_address_zip if defined('users[i].employer_address_zip') else '' }
   - Employer phone number: users[i].employer_phone
     required: False
     help: |
       Enter a 10-digit number if you have it. We will format it as
       XXX-XXX-XXXX.
 validation code: |
+  # Keep the existing PDF field mapping and saved-answer names intact.
+  users[i].employer_address_street = users[i].employer_address.address
+  users[i].employer_address_city = users[i].employer_address.city
+  users[i].employer_address_state = users[i].employer_address.state
+  users[i].employer_address_zip = users[i].employer_address.zip
   if users[i].employer_phone:
     users[i].employer_phone = fs_normalize_phone(users[i].employer_phone)
 ---
@@ -1002,11 +1011,11 @@ continue button field: users[i].income_explanation
 question: |
   Income explanation (optional)
 subquestion: |
-  If your income is estimated, averaged, seasonal, cash-based, or irregular,
-  you can write a short explanation to keep with your filing materials.
+  Use this only when the income amount needs context, such as when it is
+  estimated, averaged, seasonal, cash-based, or irregular.
 
-  This note is for your records and filing packet guidance. It is not added to
-  the court PDF automatically.
+  The note stays with your filing materials. It does not change the court PDF
+  automatically.
 
   Leave this blank if you do not want to save a note.
 fields:
@@ -1506,31 +1515,24 @@ review:
       **Rental income**
       ${ "Yes" if defined("users[i].has_rental_income") and users[i].has_rental_income else ("No" if defined("users[i].has_rental_income") else "Not answered") }
 ---
-code: |
-  try:
-    fs_section_links = section_links(nav)
-  except:
-    fs_section_links = []
+template: fs_review_section_actions
+content: |
+  ${ action_button_html(url_action('review_court_and_parties_fs'), label='Court and parties', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_personal_information_fs'), label='Personal information', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_income_fs'), label='Income', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_deductions_long_fs' if users[i].financial_form_type == 'long' else 'review_deductions_short_fs'), label='Deductions', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_expenses_long_fs' if users[i].financial_form_type == 'long' else 'review_expenses_short_fs'), label='Expenses', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_assets_long_fs' if users[i].financial_form_type == 'long' else 'review_assets_short_fs'), label='Assets', color='secondary', size='sm') }
+  ${ action_button_html(url_action('review_liabilities_long_fs' if users[i].financial_form_type == 'long' else 'review_liabilities_short_fs'), label='Liabilities and signatures', color='secondary', size='sm') }
 ---
 id: review_all_sections_fs
 event: review_all_sections_fs
 question: |
   Review by section
 subquestion: |
-  <div class="alert alert-info" role="alert">
-    <strong>Tip:</strong> Use the section list on the left or the links below to jump
-    back and update a part of your financial statement before you download.
-  </div>
+  Choose a section to update before you return to the download page.
 
-  % if fs_section_links:
-  **Jump to a section**
-  % for section in fs_section_links:
-  * ${ section }
-  % endfor
-  % else:
-  The section links are not available right now. Use the left-side section list
-  or the button below to edit individual answers.
-  % endif
+  ${ fs_review_section_actions }
 
   ${ action_button_html(url_action('review_fs'), label='Edit individual answers', color='info', size='sm') }
 
@@ -1547,19 +1549,9 @@ subquestion: |
 
   Gross weekly income: ${ currency(users[i].income_total_weekly) }
 
-  <div class="alert alert-info" role="alert">
-    <strong>Tip:</strong> Use the section list on the left or the links below to jump
-    back and update part of your financial statement before you download.
-  </div>
+  Choose a section to update.
 
-  % if fs_section_links:
-  **Jump to a section**
-  % for section in fs_section_links:
-  * ${ section }
-  % endfor
-  % endif
-
-  ${ action_button_html(url_action('review_fs'), label='Edit individual answers', color='info', size='sm') }
+  ${ fs_review_section_actions }
 
   **Things to check before download**
   - Your income sources and amounts
@@ -1592,6 +1584,9 @@ subquestion: |
 
   If you are e-filing, gather any supporting documents the court expects before
   you submit your packet.
+
+  Empty dollar fields show $0 on the completed form. Optional text and count
+  fields stay blank unless the information applies.
 
   % if defined("income_explanation_note") and income_explanation_note:
   **Income explanation note**
