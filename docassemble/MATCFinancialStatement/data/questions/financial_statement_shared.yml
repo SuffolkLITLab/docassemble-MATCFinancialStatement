@@ -1578,7 +1578,11 @@ subquestion: |
 
   **Next steps**
   1. Download and review the PDFs.
+  % if users[i].financial_form_type == "long":
+  2. Sign the financial statement and complete its notary section before filing.
+  % else:
   2. Sign anywhere the court requires your signature.
+  % endif
   3. File the forms with the court if you are ready to submit them.
   4. Give copies to the other party if your court requires that step.
 
