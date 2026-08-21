@@ -125,7 +125,6 @@ code: |
   users[i].fs_checkpoint_deductions
   nav.set_section("expenses")
   set_progress(70)
-  users[i].long_expense_list.statement_user = users[i]
   users[i].long_expense_list.gathered
   users[i].long_expenses_total
   if users[i].long_expenses_require_confirmation:
@@ -155,13 +154,13 @@ id: long_expense_sources
 generic object: ALExpenseList
 question: |
   % if users.number_gathered() > 1:
-  Expense categories for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Expense categories for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Expense categories for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Choose the expense categories that apply to ${ bold(x.statement_user.familiar(unique_names=users)) }'s household.
+  Choose the expense categories that apply to ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s household.
   % else:
   Choose the expense categories that apply to your household.
   % endif
@@ -187,13 +186,13 @@ id: long_expense_item
 generic object: ALExpenseList
 question: |
   % if users.number_gathered() > 1:
-  Expense details for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Expense details for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Expense details for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Tell us about ${ bold(x.statement_user.familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
+  Tell us about ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
   payment and how often it is paid. We will convert everything to weekly totals.
   % else:
   Tell us about your ${ ordinal(i) } expense. Enter the amount for a single
@@ -201,7 +200,7 @@ subquestion: |
   % endif
 
   % if users.number_gathered() > 1:
-  **Example:** If ${ bold(x.statement_user.familiar(unique_names=users)) }'s electricity is $120 monthly, enter 120 and choose "Monthly."
+  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s electricity is $120 monthly, enter 120 and choose "Monthly."
   % else:
   **Example:** If your electricity is $120 monthly, enter 120 and choose "Monthly."
   % endif
@@ -220,7 +219,7 @@ fields:
     input type: radio
     code: |
       times_per_year_for_expenses
-    default: cadence_to_times_per_year(x.statement_user.financial_cadence_default)
+    default: cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
 validation code: |
   if x[i].source in ("employment_other", "other"):
     x[i].display_name = fs_text_or_default(getattr(x[i], "description", ""), long_expense_terms.get(x[i].source, x[i].source))

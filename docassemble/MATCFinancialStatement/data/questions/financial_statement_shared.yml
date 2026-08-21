@@ -602,13 +602,13 @@ id: fs_income_sources
 generic object: ALIncomeList
 question: |
   % if users.number_gathered() > 1:
-  Gross income sources for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Gross income sources for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Gross income sources for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Choose all income sources ${ bold(x.statement_user.familiar(unique_names=users)) } receives.
+  Choose all income sources ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } receives.
   % else:
   Choose all income sources you receive.
   % endif
@@ -634,13 +634,13 @@ id: fs_income_item
 generic object: ALIncomeList
 question: |
   % if users.number_gathered() > 1:
-  Income details for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Income details for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Income details for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Tell us about ${ bold(x.statement_user.familiar(unique_names=users)) }'s ${ ordinal(i) } income. Enter the amount for a single
+  Tell us about ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s ${ ordinal(i) } income. Enter the amount for a single
   pay period and choose how often it is received. We will convert everything
   to a weekly amount for the court form.
   % else:
@@ -650,7 +650,7 @@ subquestion: |
   % endif
 
   % if users.number_gathered() > 1:
-  **Example:** If ${ bold(x.statement_user.familiar(unique_names=users)) } receives $300 monthly, enter 300 and choose "Monthly."
+  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } receives $300 monthly, enter 300 and choose "Monthly."
   % else:
   **Example:** If you receive $300 monthly, enter 300 and choose "Monthly."
   % endif
@@ -667,7 +667,7 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(x.statement_user.familiar(unique_names=users)) }'s default cadence (${ x.statement_user.financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
       % else:
       Use default cadence
       % endif
@@ -678,7 +678,7 @@ fields:
     input type: radio
     code: |
       times_per_year_list
-    default: cadence_to_times_per_year(x.statement_user.financial_cadence_default)
+    default: cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
     show if:
       variable: x[i].use_default_cadence
       is: False
@@ -688,7 +688,7 @@ validation code: |
   else:
     x[i].display_name = fs_income_terms.get(x[i].source, x[i].source)
   if hasattr(x[i], "use_default_cadence") and x[i].use_default_cadence:
-    x[i].times_per_year = cadence_to_times_per_year(x.statement_user.financial_cadence_default)
+    x[i].times_per_year = cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
 ---
 generic object: ALIncomeList
 code: |
@@ -731,13 +731,13 @@ id: fs_expense_sources
 generic object: ALExpenseList
 question: |
   % if users.number_gathered() > 1:
-  Expense categories for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Expense categories for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Expense categories for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Choose the expense categories that apply to ${ bold(x.statement_user.familiar(unique_names=users)) }'s household.
+  Choose the expense categories that apply to ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s household.
   % else:
   Choose the expense categories that apply to your household.
   % endif
@@ -763,13 +763,13 @@ id: fs_expense_item
 generic object: ALExpenseList
 question: |
   % if users.number_gathered() > 1:
-  Expense details for ${ bold(x.statement_user.familiar(unique_names=users)) }
+  Expense details for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
   % else:
   Expense details for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Tell us about ${ bold(x.statement_user.familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
+  Tell us about ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
   payment and how often it is paid. We will convert everything to weekly totals.
   % else:
   Tell us about your ${ ordinal(i) } expense. Enter the amount for a single
@@ -777,7 +777,7 @@ subquestion: |
   % endif
 
   % if users.number_gathered() > 1:
-  **Example:** If ${ bold(x.statement_user.familiar(unique_names=users)) }'s rent is $1,200 per month, enter 1200 and choose "Monthly."
+  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s rent is $1,200 per month, enter 1200 and choose "Monthly."
   % else:
   **Example:** If your rent is $1,200 per month, enter 1200 and choose "Monthly."
   % endif
@@ -794,7 +794,7 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(x.statement_user.familiar(unique_names=users)) }'s default cadence (${ x.statement_user.financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
       % else:
       Use default cadence
       % endif
@@ -805,7 +805,7 @@ fields:
     input type: radio
     code: |
       times_per_year_for_expenses
-    default: cadence_to_times_per_year(x.statement_user.financial_cadence_default)
+    default: cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
     show if:
       variable: x[i].use_default_cadence
       is: False
@@ -815,7 +815,7 @@ validation code: |
   else:
     x[i].display_name = fs_expense_terms.get(x[i].source, x[i].source)
   if hasattr(x[i], "use_default_cadence") and x[i].use_default_cadence:
-    x[i].times_per_year = cadence_to_times_per_year(x.statement_user.financial_cadence_default)
+    x[i].times_per_year = cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
 ---
 generic object: ALExpenseList
 code: |

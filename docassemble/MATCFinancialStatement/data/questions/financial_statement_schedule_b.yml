@@ -42,7 +42,6 @@ code: |
   users[i].schedule_b_intro
   users[i].schedule_b_rent_received
   users[i].schedule_b_expenses_list
-  users[i].schedule_b_expenses.statement_user = users[i]
   users[i].schedule_b_expenses.gather()
   users[i].schedule_b_expense_totals
   users[i].schedule_b_weekly_income

@@ -32,7 +32,6 @@ code: |
   users[i].fs_checkpoint_deductions
   nav.set_section("expenses")
   set_progress(70)
-  users[i].expense_list.statement_user = users[i]
   users[i].expense_list.gathered
   users[i].short_expense_other_description
   users[i].short_expenses_total
