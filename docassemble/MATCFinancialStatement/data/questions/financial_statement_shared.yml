@@ -1640,38 +1640,38 @@ subquestion: |
 
   You can leave any detail blank that you do not know.
 fields:
-  - Type: users[i].motor_vehicles[i].vehicle_type
+  - Type: users[i].motor_vehicles[j].vehicle_type
     required: False
-  - Make: users[i].motor_vehicles[i].make
+  - Make: users[i].motor_vehicles[j].make
     required: False
-  - Model: users[i].motor_vehicles[i].model
+  - Model: users[i].motor_vehicles[j].model
     required: False
-  - Purchase price: users[i].motor_vehicles[i].purchase_price
+  - Purchase price: users[i].motor_vehicles[j].purchase_price
     datatype: currency
     required: False
-  - Year of purchase: users[i].motor_vehicles[i].purchase_year
+  - Year of purchase: users[i].motor_vehicles[j].purchase_year
     datatype: integer
     required: False
-  - Fair market value: users[i].motor_vehicles[i].fair_market_value
+  - Fair market value: users[i].motor_vehicles[j].fair_market_value
     datatype: currency
     required: False
-  - Outstanding loan: users[i].motor_vehicles[i].outstanding_loan
+  - Outstanding loan: users[i].motor_vehicles[j].outstanding_loan
     datatype: currency
     required: False
-  - Equity: users[i].motor_vehicles[i].equity
+  - Equity: users[i].motor_vehicles[j].equity
     datatype: currency
     required: False
 ---
 code: |
-  users[i].motor_vehicles[i].vehicle_type
-  users[i].motor_vehicles[i].make
-  users[i].motor_vehicles[i].model
-  users[i].motor_vehicles[i].purchase_price
-  users[i].motor_vehicles[i].purchase_year
-  users[i].motor_vehicles[i].fair_market_value
-  users[i].motor_vehicles[i].outstanding_loan
-  users[i].motor_vehicles[i].equity
-  users[i].motor_vehicles[i].complete = True
+  users[i].motor_vehicles[j].vehicle_type
+  users[i].motor_vehicles[j].make
+  users[i].motor_vehicles[j].model
+  users[i].motor_vehicles[j].purchase_price
+  users[i].motor_vehicles[j].purchase_year
+  users[i].motor_vehicles[j].fair_market_value
+  users[i].motor_vehicles[j].outstanding_loan
+  users[i].motor_vehicles[j].equity
+  users[i].motor_vehicles[j].complete = True
 ---
 code: |
   if defined("users[i].motor_vehicles.there_are_any"):
@@ -1750,26 +1750,26 @@ subquestion: |
   If you do not know the account number or beneficiary, you can leave those
   fields blank.
 fields:
-  - Institution: users[i].pensions[i].institution
+  - Institution: users[i].pensions[j].institution
     required: False
-  - Account number: users[i].pensions[i].account_number
+  - Account number: users[i].pensions[j].account_number
     required: False
-  - Listed beneficiary: users[i].pensions[i].beneficiary
+  - Listed beneficiary: users[i].pensions[j].beneficiary
     required: False
-  - Defined benefit plan amount: users[i].pensions[i].defined_benefit_amount
+  - Defined benefit plan amount: users[i].pensions[j].defined_benefit_amount
     datatype: currency
     required: False
-  - Defined contribution plan amount: users[i].pensions[i].defined_contribution_amount
+  - Defined contribution plan amount: users[i].pensions[j].defined_contribution_amount
     datatype: currency
     required: False
 ---
 code: |
-  users[i].pensions[i].institution
-  users[i].pensions[i].account_number
-  users[i].pensions[i].beneficiary
-  users[i].pensions[i].defined_benefit_amount
-  users[i].pensions[i].defined_contribution_amount
-  users[i].pensions[i].complete = True
+  users[i].pensions[j].institution
+  users[i].pensions[j].account_number
+  users[i].pensions[j].beneficiary
+  users[i].pensions[j].defined_benefit_amount
+  users[i].pensions[j].defined_contribution_amount
+  users[i].pensions[j].complete = True
 ---
 code: |
   if defined("users[i].pensions.there_are_any"):
@@ -1847,29 +1847,29 @@ subquestion: |
 
   Leave any detail blank if you do not know it.
 fields:
-  - Asset type: users[i].other_assets[i].asset_type
+  - Asset type: users[i].other_assets[j].asset_type
     code: |
       other_asset_type_choices
-  - Description or notes: users[i].other_assets[i].description
+  - Description or notes: users[i].other_assets[j].description
     required: False
-  - Institution: users[i].other_assets[i].institution
+  - Institution: users[i].other_assets[j].institution
     required: False
-  - Account number: users[i].other_assets[i].account_number
+  - Account number: users[i].other_assets[j].account_number
     required: False
-  - Listed beneficiary: users[i].other_assets[i].beneficiary
+  - Listed beneficiary: users[i].other_assets[j].beneficiary
     required: False
-  - Current balance/value: users[i].other_assets[i].current_balance
+  - Current balance/value: users[i].other_assets[j].current_balance
     datatype: currency
     required: False
 ---
 code: |
-  users[i].other_assets[i].asset_type
-  users[i].other_assets[i].description
-  users[i].other_assets[i].institution
-  users[i].other_assets[i].account_number
-  users[i].other_assets[i].beneficiary
-  users[i].other_assets[i].current_balance
-  users[i].other_assets[i].complete = True
+  users[i].other_assets[j].asset_type
+  users[i].other_assets[j].description
+  users[i].other_assets[j].institution
+  users[i].other_assets[j].account_number
+  users[i].other_assets[j].beneficiary
+  users[i].other_assets[j].current_balance
+  users[i].other_assets[j].complete = True
 ---
 code: |
   if defined("users[i].other_assets.there_are_any"):
@@ -1947,26 +1947,26 @@ subquestion: |
   Enter the amount you actually pay each week. If you make monthly payments,
   divide the monthly payment by 4.33.
 fields:
-  - Creditor: users[i].liabilities[i].creditor
+  - Creditor: users[i].liabilities[j].creditor
     required: False
-  - Nature of debt: users[i].liabilities[i].debt_type
+  - Nature of debt: users[i].liabilities[j].debt_type
     required: False
-  - Date incurred: users[i].liabilities[i].date_incurred
+  - Date incurred: users[i].liabilities[j].date_incurred
     required: False
-  - Total amount owed: users[i].liabilities[i].amount_due
+  - Total amount owed: users[i].liabilities[j].amount_due
     datatype: currency
     required: False
-  - Weekly payment: users[i].liabilities[i].weekly_payment
+  - Weekly payment: users[i].liabilities[j].weekly_payment
     datatype: currency
     required: False
 ---
 code: |
-  users[i].liabilities[i].creditor
-  users[i].liabilities[i].debt_type
-  users[i].liabilities[i].date_incurred
-  users[i].liabilities[i].amount_due
-  users[i].liabilities[i].weekly_payment
-  users[i].liabilities[i].complete = True
+  users[i].liabilities[j].creditor
+  users[i].liabilities[j].debt_type
+  users[i].liabilities[j].date_incurred
+  users[i].liabilities[j].amount_due
+  users[i].liabilities[j].weekly_payment
+  users[i].liabilities[j].complete = True
 ---
 code: |
   if defined("users[i].liabilities.there_are_any"):
