@@ -151,16 +151,16 @@ code: |
   users[i].long_form_sections = True
 ---
 id: long_expense_sources
-generic object: ALExpenseList
+generic object: users[i].long_expense_list
 question: |
   % if users.number_gathered() > 1:
-  Expense categories for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
+  Expense categories for ${ bold(financial_statement_list_user(users[i].long_expense_list).familiar(unique_names=users)) }
   % else:
   Expense categories for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Choose the expense categories that apply to ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s household.
+  Choose the expense categories that apply to ${ bold(financial_statement_list_user(users[i].long_expense_list).familiar(unique_names=users)) }'s household.
   % else:
   Choose the expense categories that apply to your household.
   % endif
@@ -171,72 +171,72 @@ subquestion: |
   We will pause after the expenses section so you can review or edit it before
   you move on.
 fields:
-  - no label: x.selected_types
+  - no label: users[i].long_expense_list.selected_types
     datatype: checkboxes
     code: |
       long_expense_checkbox_terms_ordered
 ---
-generic object: ALExpenseList
+generic object: users[i].long_expense_list
 code: |
-  x.selected_types
-  x.move_checks_to_list(selected_terms=long_expense_terms)
-  x.moved = True
+  users[i].long_expense_list.selected_types
+  users[i].long_expense_list.move_checks_to_list(selected_terms=long_expense_terms)
+  users[i].long_expense_list.moved = True
 ---
 id: long_expense_item
-generic object: ALExpenseList
+generic object: users[i].long_expense_list
 question: |
   % if users.number_gathered() > 1:
-  Expense details for ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }
+  Expense details for ${ bold(financial_statement_list_user(users[i].long_expense_list).familiar(unique_names=users)) }
   % else:
   Expense details for you
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Tell us about ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s ${ ordinal(i) } expense. Enter the amount for a single
+  Tell us about ${ bold(financial_statement_list_user(users[i].long_expense_list).familiar(unique_names=users)) }'s ${ ordinal(j) } expense. Enter the amount for a single
   payment and how often it is paid. We will convert everything to weekly totals.
   % else:
-  Tell us about your ${ ordinal(i) } expense. Enter the amount for a single
+  Tell us about your ${ ordinal(j) } expense. Enter the amount for a single
   payment and how often you pay it. We will convert everything to weekly totals.
   % endif
 
   % if users.number_gathered() > 1:
-  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s electricity is $120 monthly, enter 120 and choose "Monthly."
+  **Example:** If ${ bold(financial_statement_list_user(users[i].long_expense_list).familiar(unique_names=users)) }'s electricity is $120 monthly, enter 120 and choose "Monthly."
   % else:
   **Example:** If your electricity is $120 monthly, enter 120 and choose "Monthly."
   % endif
 
   ${ collapse_template(fs_amount_entry_help) }
 fields:
-  - Type of expense: x[i].source
+  - Type of expense: users[i].long_expense_list[j].source
     code: |
       long_expense_terms_ordered
     default: other
-  - Description (if needed): x[i].description
+  - Description (if needed): users[i].long_expense_list[j].description
     required: False
-  - Amount: x[i].value
+  - Amount: users[i].long_expense_list[j].value
     datatype: currency
-  - How often do you pay this amount?: x[i].times_per_year
+  - How often do you pay this amount?: users[i].long_expense_list[j].times_per_year
     input type: radio
     code: |
       times_per_year_for_expenses
-    default: cadence_to_times_per_year(financial_statement_list_user(x).financial_cadence_default)
+    default: cadence_to_times_per_year(financial_statement_list_user(users[i].long_expense_list).financial_cadence_default)
 validation code: |
-  if x[i].source in ("employment_other", "other"):
-    x[i].display_name = fs_text_or_default(getattr(x[i], "description", ""), long_expense_terms.get(x[i].source, x[i].source))
+  if users[i].long_expense_list[j].source in ("employment_other", "other"):
+    users[i].long_expense_list[j].display_name = fs_text_or_default(getattr(users[i].long_expense_list[j], "description", ""), long_expense_terms.get(users[i].long_expense_list[j].source, users[i].long_expense_list[j].source))
   else:
-    x[i].display_name = long_expense_terms.get(x[i].source, x[i].source)
+    users[i].long_expense_list[j].display_name = long_expense_terms.get(users[i].long_expense_list[j].source, users[i].long_expense_list[j].source)
 ---
-generic object: ALExpenseList
+generic object: users[i].long_expense_list
 code: |
-  x.moved
-  for expense in x.elements:
+  users[i].long_expense_list.moved
+  for expense in users[i].long_expense_list.elements:
     expense.value
-  x.revisit = True
-  x.gathered = True
+  users[i].long_expense_list.revisit = True
+  users[i].long_expense_list.gathered = True
 ---
-generic object: ALExpenseList
-table: x.table
-rows: x
+generic object: users[i].long_expense_list
+table: users[i].long_expense_list.table
+rows: users[i].long_expense_list
 columns:
   - Type: |
       row_item.display_name if hasattr(row_item, "display_name") else row_item.source
@@ -251,17 +251,17 @@ edit:
 
 ---
 id: long_expense_revisit
-generic object: ALExpenseList
-continue button field: x.revisit
+generic object: users[i].long_expense_list
+continue button field: users[i].long_expense_list.revisit
 question: |
   Edit expenses
 subquestion: |
-  ${ x.table }
+  ${ users[i].long_expense_list.table }
 
   Look over your entries. If something is missing, use "Add another" to include
   more expenses.
 
-  ${ x.add_action() }
+  ${ users[i].long_expense_list.add_action() }
 ---
 id: long_deductions
 sets:
