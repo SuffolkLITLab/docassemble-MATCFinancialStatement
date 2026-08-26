@@ -58,7 +58,6 @@ code: |
   users[i].schedule_a_intro
   users[i].schedule_a_gross_receipts
   users[i].schedule_a_expenses_list
-  users[i].schedule_a_expenses.statement_user = users[i]
   users[i].schedule_a_expenses.gather()
   users[i].schedule_a_expense_totals
   users[i].schedule_a_weekly_income

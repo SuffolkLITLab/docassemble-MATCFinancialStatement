@@ -4,6 +4,7 @@ from docassemble.base.util import currency, defined, log, set_variables, value
 
 __names__ = [
     "financial_statement_other_user",
+    "financial_statement_list_user",
     "_fs_elements",
     "_fs_item_total",
     "_fs_item_matches_source",
@@ -60,6 +61,17 @@ def financial_statement_other_user(statement_user):
         if user is not statement_user:
             return user
     return users[1] if statement_user is users[0] else users[0]
+
+
+def financial_statement_list_user(items):
+    """Return the user who owns a financial list without storing a backreference."""
+    users = value("users")
+    match = re.match(r"^users\[(\d+)\](?:\.|$)", getattr(items, "instanceName", ""))
+    if match:
+        index = int(match.group(1))
+        if 0 <= index < len(users):
+            return users[index]
+    return users[0]
 
 
 def _fs_elements(items):

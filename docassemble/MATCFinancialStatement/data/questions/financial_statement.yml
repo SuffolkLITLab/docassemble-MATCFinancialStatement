@@ -68,7 +68,6 @@ code: |
 
       nav.set_section("income")
       set_progress(55)
-      users[i].income_list.statement_user = users[i]
       users[i].income_list.gathered
       users[i].income_schedule_triggers
 
