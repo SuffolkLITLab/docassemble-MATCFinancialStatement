@@ -382,6 +382,10 @@ subquestion: |
   % endif
 
   Social Security number is optional. Enter only the last 4 digits.
+validation code: |
+  import re
+  if users[i].ssn and not re.fullmatch(r"\d{4}", str(users[i].ssn).strip()):
+    validation_error("Enter exactly 4 digits, the last 4 of the Social Security number, or leave it blank.", field=users[i].attr_name("ssn"))
 fields:
   - Social Security number (last 4 digits): users[i].ssn
     required: False
