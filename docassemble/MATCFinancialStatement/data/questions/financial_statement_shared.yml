@@ -374,11 +374,13 @@ question: |
   Personal information for you
   % endif
 subquestion: |
-  We ask about children to match the court form.
-  % if users.number_gathered() > 1:
-  If ${ bold(users[i].familiar(unique_names=users)) } does not have children, leave the count at 0.
-  % else:
-  If you do not have children, leave the count at 0.
+  We ask about children to match the court form. Count every child who lives
+  with ${ "you" if users.number_gathered() < 2 else bold(users[i].familiar(unique_names=users)) },
+  including children from another relationship.
+  % if showifdef("users[i].children_count_prefilled"):
+
+  We filled in the children you already told us about. Change the number if
+  it is wrong, or add any other children.
   % endif
 
   Social Security number is optional. Enter only the last 4 digits.
@@ -404,7 +406,13 @@ fields:
       % endif
     field: users[i].has_children
     datatype: yesno
-  - Number of children living with you: users[i].children_living_with_user_count
+  - label: |
+      % if users.number_gathered() > 1:
+      Number of children living with ${ users[i].familiar(unique_names=users) }
+      % else:
+      Number of children living with you
+      % endif
+    field: users[i].children_living_with_user_count
     datatype: integer
     required: False
     min: 0
