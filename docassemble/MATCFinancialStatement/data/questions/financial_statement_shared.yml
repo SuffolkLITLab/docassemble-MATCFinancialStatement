@@ -396,6 +396,9 @@ fields:
       Optional. Enter only the last 4 digits (example: 1234).
   - Date of birth: users[i].birthdate
     datatype: date
+    # A parent interview can mark a person who is not present, so their
+    # date of birth can be left blank for them to complete later.
+    required: not showifdef("users[i].personal_details_optional")
     help: |
       Use month/day/year format.
   - label: |
