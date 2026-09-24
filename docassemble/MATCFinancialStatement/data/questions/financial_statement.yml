@@ -179,7 +179,7 @@ attachment:
     - "user_address_state": ${ users[i].address.state }
     - "user_address_zip": ${ users[i].address.zip }
     - "user_phone": ${ fs_normalize_phone(users[i].phone_number) if defined('users[i].phone_number') else '' }
-    - "user_birthdate": ${ users[i].birthdate.format() }
+    - "user_birthdate": ${ users[i].birthdate.format() if users[i].birthdate else "" }
     - "children_living_count": ${ showifdef('users[i].children_living_with_user_count') }
     - "user_occupation": ${ showifdef('users[i].job_title') }
     - "user_employer_name": ${ showifdef('users[i].employer_name') }
@@ -378,7 +378,7 @@ attachment:
     - "user_address_state": ${ users[i].address.state }
     - "user_address_zip": ${ users[i].address.zip }
     - "user_phone": ${ fs_normalize_phone(users[i].phone_number) if defined('users[i].phone_number') else '' }
-    - "user_birthdate": ${ users[i].birthdate.format() }
+    - "user_birthdate": ${ users[i].birthdate.format() if users[i].birthdate else "" }
     - "children_living_count": ${ showifdef('users[i].children_living_with_user_count') }
     - "user_occupation": ${ showifdef('users[i].job_title') }
     - "user_employer_name": ${ showifdef('users[i].employer_name') }
