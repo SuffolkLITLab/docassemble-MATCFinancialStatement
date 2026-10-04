@@ -52,7 +52,10 @@ code: |
   users[i].liabilities.gather()
   users[i].short_liabilities_total
   users[i].short_certification
-  users[i].attorney_statement
+  # A combined interview may already know whether this spouse has an
+  # attorney; skip the attorney page when they do not.
+  if showifdef(users[i].attr_name("has_attorney"), True):
+    users[i].attorney_statement
   users[i].fs_checkpoint_liabilities
   users[i].short_form_sections = True
 ---

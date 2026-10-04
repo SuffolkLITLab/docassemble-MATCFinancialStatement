@@ -1421,10 +1421,10 @@ review:
     button: |
       **Your signature**
       ${ users[i].user_signature if defined("users[i].user_signature") and users[i].user_signature else "Not provided" }
-  - Edit: has_attorney
+  - Edit: users[i].has_attorney
     button: |
       **Attorney information**
-      ${ fs_yes_no_text("has_attorney") }
+      ${ fs_yes_no_text("users[i].has_attorney") }
 ---
 id: review_liabilities_long_fs
 event: review_liabilities_long_fs
@@ -1445,10 +1445,10 @@ review:
     button: |
       **Notary section**
       ${ fs_yes_no_text("users[i].will_notarize_now") }
-  - Edit: has_attorney
+  - Edit: users[i].has_attorney
     button: |
       **Attorney information**
-      ${ fs_yes_no_text("has_attorney") }
+      ${ fs_yes_no_text("users[i].has_attorney") }
 ---
 id: fs_checkpoint_liabilities
 continue button field: users[i].fs_checkpoint_liabilities
@@ -2048,42 +2048,42 @@ subquestion: |
 
   If you leave it unchecked, the rest of this page will stay hidden.
 fields:
-  - Do you have an attorney?: has_attorney
+  - Do you have an attorney?: users[i].has_attorney
     datatype: yesno
   - Attorney signature date: users[i].attorney_signature_date
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     datatype: date
     required: False
   - Attorney signature: users[i].attorney_signature
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney printed name: users[i].attorney_print_name
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney address: users[i].attorney_address
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney phone: users[i].attorney_phone
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney BBO number: users[i].attorney_bbo
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
