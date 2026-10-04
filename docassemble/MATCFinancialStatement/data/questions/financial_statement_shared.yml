@@ -388,6 +388,13 @@ validation code: |
   import re
   if users[i].ssn and not re.fullmatch(r"\d{4}", str(users[i].ssn).strip()):
     validation_error("Enter exactly 4 digits, the last 4 of the Social Security number, or leave it blank.", field=users[i].attr_name("ssn"))
+  if showifdef(users[i].attr_name("birthdate"), None):
+    if users[i].birthdate > today():
+      validation_error("The date of birth can't be in the future. Check the year.", field=users[i].attr_name("birthdate"))
+    if date_difference(starting=users[i].birthdate, ending=today()).years < 16:
+      validation_error("The person filing must be at least 16 years old. Check the year.", field=users[i].attr_name("birthdate"))
+    if date_difference(starting=users[i].birthdate, ending=today()).years > 110:
+      validation_error("That date of birth is more than 110 years ago. Check the year.", field=users[i].attr_name("birthdate"))
 fields:
   - Social Security number (last 4 digits): users[i].ssn
     required: False
