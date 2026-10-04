@@ -1099,7 +1099,8 @@ question: |
 subquestion: |
   You finished the court and party information.
 
-  If you want, you can review or edit this section now before moving on.
+  Please review this section. If anything is different from your records,
+  edit it now.
 
   ${ action_button_html(url_action('review_court_and_parties_fs'), label='Review or edit this section', color='info') }
 
@@ -1143,7 +1144,8 @@ question: |
 subquestion: |
   You finished the personal information section.
 
-  If you want, you can review or edit this section now before moving on.
+  Please review this section. If anything is different from your records,
+  edit it now.
 
   ${ action_button_html(url_action('review_personal_information_fs'), label='Review or edit this section', color='info') }
 
@@ -1293,7 +1295,8 @@ question: |
 subquestion: |
   You finished the deductions section.
 
-  If you want, you can review these entries now before moving on to expenses.
+  Please review these entries. If anything is different from your records,
+  edit it now, before you move on to expenses.
 
   ${ action_button_html(url_action('review_deductions_long_fs' if users[i].financial_form_type == 'long' else 'review_deductions_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1332,8 +1335,8 @@ question: |
 subquestion: |
   You finished the expenses section.
 
-  If you want, you can review or edit your expense entries now before moving on
-  to assets.
+  Please review your expense entries. If anything is different from your
+  records, edit it now, before you move on to assets.
 
   ${ action_button_html(url_action('review_expenses_long_fs' if users[i].financial_form_type == 'long' else 'review_expenses_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1406,8 +1409,9 @@ question: |
 subquestion: |
   You finished the assets section.
 
-  If you want, you can review or edit your property, account, and asset entries
-  now before moving on to liabilities and signatures.
+  Please review your property, account, and asset entries. If anything is
+  different from your records, edit it now, before you move on to liabilities
+  and signatures.
 
   ${ action_button_html(url_action('review_assets_long_fs' if users[i].financial_form_type == 'long' else 'review_assets_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1464,8 +1468,9 @@ question: |
 subquestion: |
   You finished the last major section before final review.
 
-  If you want, you can review debts, signatures, notary details, or attorney
-  information now before we move to the final review page.
+  Please review your debts, signature, notary details, and attorney
+  information. If anything is different from your records, edit it now, before
+  the final review page.
 
   ${ action_button_html(url_action('review_liabilities_long_fs' if users[i].financial_form_type == 'long' else 'review_liabilities_short_fs'), label='Review or edit this section', color='info') }
 
