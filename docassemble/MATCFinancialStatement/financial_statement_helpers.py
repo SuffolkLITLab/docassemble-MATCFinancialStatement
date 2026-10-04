@@ -37,6 +37,7 @@ __names__ = [
     "_other_asset_nth_attr",
     "_short_asset_group_items",
     "_short_asset_nth_attr",
+    "fs_cadence_label",
     "fs_yes_no_text",
     "fs_vehicle_label",
     "fs_pension_label",
@@ -400,6 +401,20 @@ def _short_asset_nth_attr(group_name, index, attr_name):
     if len(grouped_items) > index:
         return fs_text_or_default(fs_item_value(grouped_items[index], attr_name))
     return ""
+
+
+CADENCE_LABELS = {
+    "weekly": "Weekly",
+    "biweekly": "Every 2 weeks",
+    "semimonthly": "Twice per month",
+    "monthly": "Monthly",
+    "annual": "Yearly",
+}
+
+
+def fs_cadence_label(cadence):
+    """The words a user saw for a pay schedule, instead of its stored key."""
+    return CADENCE_LABELS.get(str(cadence), str(cadence))
 
 
 def fs_yes_no_text(var_name):

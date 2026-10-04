@@ -233,7 +233,7 @@ content: |
   Enter one real amount at a time, then choose how often it happens.
 
   Example:
-  If your electric bill is $120 each month, enter `120` and choose `Monthly`.
+  If your electric bill is $120 each month, enter **120** and choose **Monthly**.
 ---
 template: fs_intro_step_3
 subject: |
@@ -265,8 +265,8 @@ content: |
   - Do not convert it to weekly or yearly yourself. The interview does that for you.
 
   **Examples**
-  - Paid $900 every 2 weeks: enter `900` and choose `Every 2 weeks`
-  - Electric bill is $120 per month: enter `120` and choose `Monthly`
+  - Paid $900 every 2 weeks: enter **900** and choose **Every 2 weeks**
+  - Electric bill is $120 per month: enter **120** and choose **Monthly**
 ---
 template: fs_estimate_help
 subject: |
@@ -689,10 +689,12 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % else:
-      Use default cadence
+      Use my usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % endif
+    help: |
+      Uncheck this to choose a different schedule for this amount.
     field: x[i].use_default_cadence
     datatype: yesno
     default: True
@@ -816,10 +818,12 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % else:
-      Use default cadence
+      Use my usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % endif
+    help: |
+      Uncheck this to choose a different schedule for this amount.
     field: x[i].use_default_cadence
     datatype: yesno
     default: True
@@ -905,7 +909,8 @@ sets:
 question: |
   Gross income (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
@@ -941,7 +946,8 @@ sets:
 question: |
   Gross income (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
@@ -977,7 +983,8 @@ sets:
 question: |
   Gross income (part 3)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
