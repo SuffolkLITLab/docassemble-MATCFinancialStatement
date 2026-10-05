@@ -233,7 +233,7 @@ content: |
   Enter one real amount at a time, then choose how often it happens.
 
   Example:
-  If your electric bill is $120 each month, enter `120` and choose `Monthly`.
+  If your electric bill is $120 each month, enter **120** and choose **Monthly**.
 ---
 template: fs_intro_step_3
 subject: |
@@ -265,8 +265,8 @@ content: |
   - Do not convert it to weekly or yearly yourself. The interview does that for you.
 
   **Examples**
-  - Paid $900 every 2 weeks: enter `900` and choose `Every 2 weeks`
-  - Electric bill is $120 per month: enter `120` and choose `Monthly`
+  - Paid $900 every 2 weeks: enter **900** and choose **Every 2 weeks**
+  - Electric bill is $120 per month: enter **120** and choose **Monthly**
 ---
 template: fs_estimate_help
 subject: |
@@ -388,6 +388,13 @@ validation code: |
   import re
   if users[i].ssn and not re.fullmatch(r"\d{4}", str(users[i].ssn).strip()):
     validation_error("Enter exactly 4 digits, the last 4 of the Social Security number, or leave it blank.", field=users[i].attr_name("ssn"))
+  if showifdef(users[i].attr_name("birthdate"), None):
+    if users[i].birthdate > today():
+      validation_error("The date of birth can't be in the future. Check the year.", field=users[i].attr_name("birthdate"))
+    if date_difference(starting=users[i].birthdate, ending=today()).years < 16:
+      validation_error("The person filing must be at least 16 years old. Check the year.", field=users[i].attr_name("birthdate"))
+    if date_difference(starting=users[i].birthdate, ending=today()).years > 110:
+      validation_error("That date of birth is more than 110 years ago. Check the year.", field=users[i].attr_name("birthdate"))
 fields:
   - Social Security number (last 4 digits): users[i].ssn
     required: False
@@ -682,10 +689,12 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % else:
-      Use default cadence
+      Use my usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % endif
+    help: |
+      Uncheck this to choose a different schedule for this amount.
     field: x[i].use_default_cadence
     datatype: yesno
     default: True
@@ -809,10 +818,12 @@ fields:
     datatype: currency
   - label: |
       % if users.number_gathered() > 1:
-      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s default cadence (${ financial_statement_list_user(x).financial_cadence_default })
+      Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % else:
-      Use default cadence
+      Use my usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
       % endif
+    help: |
+      Uncheck this to choose a different schedule for this amount.
     field: x[i].use_default_cadence
     datatype: yesno
     default: True
@@ -898,7 +909,8 @@ sets:
 question: |
   Gross income (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
@@ -934,7 +946,8 @@ sets:
 question: |
   Gross income (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
@@ -970,7 +983,8 @@ sets:
 question: |
   Gross income (part 3)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
+  To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
 
   ${ collapse_template(fs_estimate_help) }
@@ -1092,7 +1106,8 @@ question: |
 subquestion: |
   You finished the court and party information.
 
-  If you want, you can review or edit this section now before moving on.
+  Please review this section. If anything is different from your records,
+  edit it now.
 
   ${ action_button_html(url_action('review_court_and_parties_fs'), label='Review or edit this section', color='info') }
 
@@ -1136,7 +1151,8 @@ question: |
 subquestion: |
   You finished the personal information section.
 
-  If you want, you can review or edit this section now before moving on.
+  Please review this section. If anything is different from your records,
+  edit it now.
 
   ${ action_button_html(url_action('review_personal_information_fs'), label='Review or edit this section', color='info') }
 
@@ -1286,7 +1302,8 @@ question: |
 subquestion: |
   You finished the deductions section.
 
-  If you want, you can review these entries now before moving on to expenses.
+  Please review these entries. If anything is different from your records,
+  edit it now, before you move on to expenses.
 
   ${ action_button_html(url_action('review_deductions_long_fs' if users[i].financial_form_type == 'long' else 'review_deductions_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1325,8 +1342,8 @@ question: |
 subquestion: |
   You finished the expenses section.
 
-  If you want, you can review or edit your expense entries now before moving on
-  to assets.
+  Please review your expense entries. If anything is different from your
+  records, edit it now, before you move on to assets.
 
   ${ action_button_html(url_action('review_expenses_long_fs' if users[i].financial_form_type == 'long' else 'review_expenses_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1399,8 +1416,9 @@ question: |
 subquestion: |
   You finished the assets section.
 
-  If you want, you can review or edit your property, account, and asset entries
-  now before moving on to liabilities and signatures.
+  Please review your property, account, and asset entries. If anything is
+  different from your records, edit it now, before you move on to liabilities
+  and signatures.
 
   ${ action_button_html(url_action('review_assets_long_fs' if users[i].financial_form_type == 'long' else 'review_assets_short_fs'), label='Review or edit this section', color='info') }
 
@@ -1421,10 +1439,10 @@ review:
     button: |
       **Your signature**
       ${ users[i].user_signature if defined("users[i].user_signature") and users[i].user_signature else "Not provided" }
-  - Edit: has_attorney
+  - Edit: users[i].has_attorney
     button: |
       **Attorney information**
-      ${ fs_yes_no_text("has_attorney") }
+      ${ fs_yes_no_text("users[i].has_attorney") }
 ---
 id: review_liabilities_long_fs
 event: review_liabilities_long_fs
@@ -1445,10 +1463,10 @@ review:
     button: |
       **Notary section**
       ${ fs_yes_no_text("users[i].will_notarize_now") }
-  - Edit: has_attorney
+  - Edit: users[i].has_attorney
     button: |
       **Attorney information**
-      ${ fs_yes_no_text("has_attorney") }
+      ${ fs_yes_no_text("users[i].has_attorney") }
 ---
 id: fs_checkpoint_liabilities
 continue button field: users[i].fs_checkpoint_liabilities
@@ -1457,8 +1475,9 @@ question: |
 subquestion: |
   You finished the last major section before final review.
 
-  If you want, you can review debts, signatures, notary details, or attorney
-  information now before we move to the final review page.
+  Please review your debts, signature, notary details, and attorney
+  information. If anything is different from your records, edit it now, before
+  the final review page.
 
   ${ action_button_html(url_action('review_liabilities_long_fs' if users[i].financial_form_type == 'long' else 'review_liabilities_short_fs'), label='Review or edit this section', color='info') }
 
@@ -2048,42 +2067,42 @@ subquestion: |
 
   If you leave it unchecked, the rest of this page will stay hidden.
 fields:
-  - Do you have an attorney?: has_attorney
+  - Do you have an attorney?: users[i].has_attorney
     datatype: yesno
   - Attorney signature date: users[i].attorney_signature_date
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     datatype: date
     required: False
   - Attorney signature: users[i].attorney_signature
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney printed name: users[i].attorney_print_name
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney address: users[i].attorney_address
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney phone: users[i].attorney_phone
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
   - Attorney BBO number: users[i].attorney_bbo
     show if:
-      variable: has_attorney
+      variable: users[i].has_attorney
 
       is: True
     required: False
