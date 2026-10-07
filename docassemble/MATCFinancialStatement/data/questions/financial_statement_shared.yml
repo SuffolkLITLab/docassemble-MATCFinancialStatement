@@ -427,9 +427,9 @@ fields:
       Use month/day/year format.
   - label: |
       % if users.number_gathered() > 1:
-      Does ${ bold(users[i].familiar(unique_names=users)) } have any children?
+      Does ${ bold(users[i].familiar(unique_names=users)) } have any children, from this marriage or another relationship?
       % else:
-      Do you have any children?
+      Do you have any children, from this marriage or another relationship?
       % endif
     field: users[i].has_children
     datatype: yesno
