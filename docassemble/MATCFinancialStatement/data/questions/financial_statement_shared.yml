@@ -314,6 +314,23 @@ fields:
       is: True
     help: |
       This estimate helps the court decide whether the short or long form applies.
+script: |
+  <script>
+    // Show the amount with commas under each box, so a missing or extra zero stands out.
+    $(function () {
+      $("input[type=number], input[type=text].dacurrency, input.dacurrency").each(function () {
+        var box = $(this);
+        var preview = $('<div class="form-text text-muted fs-amount-preview" aria-live="polite"></div>');
+        box.closest(".input-group").length ? box.closest(".input-group").after(preview) : box.after(preview);
+        var show = function () {
+          var n = parseFloat(String(box.val()).replace(/,/g, ""));
+          preview.text(isNaN(n) ? "" : "You entered $" + n.toLocaleString("en-US", {maximumFractionDigits: 2}));
+        };
+        box.on("input change", show);
+        show();
+      });
+    });
+  </script>
 ---
 code: |
   if defined("users[i].gross_annual_income_unknown") and users[i].gross_annual_income_unknown:
@@ -1004,6 +1021,17 @@ subquestion: |
   You can still go back and edit any income source before you download.
 
   Total gross weekly income (current): ${ currency(users[i].income_total_weekly) }
+
+  % if fs_safe_float(users[i].gross_annual_income) > 0 and fs_safe_float(users[i].income_total_weekly) > 0 and abs(fs_safe_float(users[i].income_total_weekly) * 52 - fs_safe_float(users[i].gross_annual_income)) > 0.2 * fs_safe_float(users[i].gross_annual_income):
+  **Check your numbers.** These entries add up to about
+  ${ currency(fs_safe_float(users[i].income_total_weekly) * 52) } a year. At the
+  start, you gave ${ currency(fs_safe_float(users[i].gross_annual_income)) } as
+  your gross income for the last 12 months.
+
+  A difference can be fine if your income changed this year. If one of the
+  numbers is a typo, go back and fix it. The yearly figure decides whether you
+  file the short or the long form.
+  % endif
 ---
 code: |
   # Normalize mixed Decimal/float totals before arithmetic.
