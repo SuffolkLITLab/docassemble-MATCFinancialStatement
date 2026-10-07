@@ -1224,8 +1224,8 @@ subquestion: |
 review:
   - Edit: users[i].financial_cadence_default
     button: |
-      **Default pay frequency**
-      ${ users[i].financial_cadence_default if defined("users[i].financial_cadence_default") else "Not provided" }
+      **Usual pay schedule**
+      ${ fs_cadence_label(users[i].financial_cadence_default) if defined("users[i].financial_cadence_default") else "Not provided" }
   - Edit: users[i].income_list.revisit
     button: |
       **Income entries**

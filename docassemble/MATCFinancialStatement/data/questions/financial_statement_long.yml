@@ -275,7 +275,7 @@ question: |
   Deductions from gross income
 subquestion: |
   Enter the amount taken out in one pay period for each line.
-  Use your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   These are amounts withheld from your gross pay.
 
   Withholding is tax already taken from your pay. Estimated payments are tax
@@ -420,7 +420,7 @@ continue button field: users[i].long_expenses_part_1
 question: |
   Weekly expenses (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Rent: users[i].long_expense_rent
@@ -468,7 +468,7 @@ continue button field: users[i].long_expenses_part_2
 question: |
   Weekly expenses (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Laundry: users[i].long_expense_laundry
@@ -531,7 +531,7 @@ continue button field: users[i].long_expenses_part_3
 question: |
   Weekly expenses (part 3)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Child support (attach order if from different court): users[i].long_expense_child_support
