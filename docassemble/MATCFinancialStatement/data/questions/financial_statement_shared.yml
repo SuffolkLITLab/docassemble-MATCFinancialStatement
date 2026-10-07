@@ -599,6 +599,23 @@ fields:
     field: users[i].has_health_insurance
     datatype: yesno
   - Name of health insurance provider: users[i].health_insurance_provider
+    input type: combobox
+    choices:
+      - MassHealth
+      - Medicare
+      - Blue Cross Blue Shield of Massachusetts
+      - Harvard Pilgrim Health Care
+      - Tufts Health Plan
+      - Fallon Health
+      - Health New England
+      - WellSense Health Plan
+      - Mass General Brigham Health Plan
+      - UnitedHealthcare
+      - Aetna
+      - Cigna
+      - TRICARE
+    help: |
+      Pick from the list, or type the name if your provider isn't listed.
     show if:
       variable: users[i].has_health_insurance
 
