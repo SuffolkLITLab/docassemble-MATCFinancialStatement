@@ -275,7 +275,7 @@ question: |
   Deductions from gross income
 subquestion: |
   Enter the amount taken out in one pay period for each line.
-  Use your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   These are amounts withheld from your gross pay.
 
   Withholding is tax already taken from your pay. Estimated payments are tax
@@ -314,6 +314,15 @@ fields:
   - Vision insurance: users[i].long_deduction_vision
     datatype: currency
     required: False
+  - How often is the insurance amounts above taken out?: users[i].insurance_deduction_cadence
+    input type: radio
+    code: |
+      cadence_choices
+    default: ${ users[i].financial_cadence_default }
+    help: |
+      Keep your usual pay schedule if the premium comes out of every paycheck.
+      If you pay it on a different schedule, for example monthly, choose that
+      and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].long_deduction_union
     datatype: currency
     required: False
@@ -356,9 +365,9 @@ code: |
     + to_weekly(value("users[i].long_deduction_state"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_fica"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_medicare"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_medical"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_dental"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_vision"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_medical"), fs_insurance_cadence(users[i]))
+    + to_weekly(value("users[i].long_deduction_dental"), fs_insurance_cadence(users[i]))
+    + to_weekly(value("users[i].long_deduction_vision"), fs_insurance_cadence(users[i]))
     + to_weekly(value("users[i].long_deduction_union"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_child_support"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_spousal_support"), users[i].financial_cadence_default)
@@ -420,7 +429,7 @@ continue button field: users[i].long_expenses_part_1
 question: |
   Weekly expenses (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Rent: users[i].long_expense_rent
@@ -468,7 +477,7 @@ continue button field: users[i].long_expenses_part_2
 question: |
   Weekly expenses (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Laundry: users[i].long_expense_laundry
@@ -531,7 +540,7 @@ continue button field: users[i].long_expenses_part_3
 question: |
   Weekly expenses (part 3)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   If a line does not apply, leave it blank.
 fields:
   - Child support (attach order if from different court): users[i].long_expense_child_support
@@ -839,6 +848,8 @@ subquestion: |
   Fill this out only if you are completing the notarization right now.
 
   If the statement will be notarized later, leave this page blank for now.
+  You will need to sign the printed statement in front of a notary.
+  [Find a notary public](https://www.mass.gov/info-details/find-a-notary-public)
 fields:
   - Will you have this notarized now?: users[i].will_notarize_now
     datatype: yesno

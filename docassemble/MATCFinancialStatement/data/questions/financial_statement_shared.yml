@@ -314,6 +314,23 @@ fields:
       is: True
     help: |
       This estimate helps the court decide whether the short or long form applies.
+script: |
+  <script>
+    // Show the amount with commas under each box, so a missing or extra zero stands out.
+    $(function () {
+      $("input[type=number], input[type=text].dacurrency, input.dacurrency").each(function () {
+        var box = $(this);
+        var preview = $('<div class="form-text text-muted fs-amount-preview" aria-live="polite"></div>');
+        box.closest(".input-group").length ? box.closest(".input-group").after(preview) : box.after(preview);
+        var show = function () {
+          var n = parseFloat(String(box.val()).replace(/,/g, ""));
+          preview.text(isNaN(n) ? "" : "You entered $" + n.toLocaleString("en-US", {maximumFractionDigits: 2}));
+        };
+        box.on("input change", show);
+        show();
+      });
+    });
+  </script>
 ---
 code: |
   if defined("users[i].gross_annual_income_unknown") and users[i].gross_annual_income_unknown:
@@ -410,9 +427,9 @@ fields:
       Use month/day/year format.
   - label: |
       % if users.number_gathered() > 1:
-      Does ${ bold(users[i].familiar(unique_names=users)) } have any children?
+      Does ${ bold(users[i].familiar(unique_names=users)) } have any children, from this marriage or another relationship?
       % else:
-      Do you have any children?
+      Do you have any children, from this marriage or another relationship?
       % endif
     field: users[i].has_children
     datatype: yesno
@@ -582,6 +599,23 @@ fields:
     field: users[i].has_health_insurance
     datatype: yesno
   - Name of health insurance provider: users[i].health_insurance_provider
+    input type: datalist
+    choices:
+      - MassHealth
+      - Medicare
+      - Blue Cross Blue Shield of Massachusetts
+      - Harvard Pilgrim Health Care
+      - Tufts Health Plan
+      - Fallon Health
+      - Health New England
+      - WellSense Health Plan
+      - Mass General Brigham Health Plan
+      - UnitedHealthcare
+      - Aetna
+      - Cigna
+      - TRICARE
+    help: |
+      Pick from the list, or type the name if your provider isn't listed.
     show if:
       variable: users[i].has_health_insurance
 
@@ -1004,6 +1038,17 @@ subquestion: |
   You can still go back and edit any income source before you download.
 
   Total gross weekly income (current): ${ currency(users[i].income_total_weekly) }
+
+  % if fs_safe_float(users[i].gross_annual_income) > 0 and fs_safe_float(users[i].income_total_weekly) > 0 and abs(fs_safe_float(users[i].income_total_weekly) * 52 - fs_safe_float(users[i].gross_annual_income)) > 0.2 * fs_safe_float(users[i].gross_annual_income):
+  **Check your numbers.** These entries add up to about
+  ${ currency(fs_safe_float(users[i].income_total_weekly) * 52) } a year. At the
+  start, you gave ${ currency(fs_safe_float(users[i].gross_annual_income)) } as
+  your gross income for the last 12 months.
+
+  A difference can be fine if your income changed this year. If one of the
+  numbers is a typo, go back and fix it. The yearly figure decides whether you
+  file the short or the long form.
+  % endif
 ---
 code: |
   # Normalize mixed Decimal/float totals before arithmetic.
@@ -1224,8 +1269,8 @@ subquestion: |
 review:
   - Edit: users[i].financial_cadence_default
     button: |
-      **Default pay frequency**
-      ${ users[i].financial_cadence_default if defined("users[i].financial_cadence_default") else "Not provided" }
+      **Usual pay schedule**
+      ${ fs_cadence_label(users[i].financial_cadence_default) if defined("users[i].financial_cadence_default") else "Not provided" }
   - Edit: users[i].income_list.revisit
     button: |
       **Income entries**

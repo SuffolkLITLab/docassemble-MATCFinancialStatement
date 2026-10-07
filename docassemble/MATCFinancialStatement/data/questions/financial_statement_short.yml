@@ -68,7 +68,7 @@ question: |
   Itemized deductions from gross income
 subquestion: |
   Enter the amount taken out in one pay period for each line.
-  Use your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   These are amounts withheld from your gross pay.
 
   Federal and state withholding are income taxes already taken from your pay.
@@ -95,6 +95,15 @@ fields:
   - Medical insurance: users[i].short_deduction_medical
     datatype: currency
     required: False
+  - How often is the insurance amount above taken out?: users[i].insurance_deduction_cadence
+    input type: radio
+    code: |
+      cadence_choices
+    default: ${ users[i].financial_cadence_default }
+    help: |
+      Keep your usual pay schedule if the premium comes out of every paycheck.
+      If you pay it on a different schedule, for example monthly, choose that
+      and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].short_deduction_union
     datatype: currency
     required: False
@@ -104,7 +113,7 @@ code: |
     to_weekly(value("users[i].short_deduction_federal"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].short_deduction_state"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].short_deduction_fica"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].short_deduction_medical"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].short_deduction_medical"), fs_insurance_cadence(users[i]))
     + to_weekly(value("users[i].short_deduction_union"), users[i].financial_cadence_default)
   )
 ---
@@ -128,7 +137,7 @@ continue button field: users[i].short_other_deductions
 question: |
   Other deductions from salary or wages
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   Include deductions not listed on the previous page.
 
   **Examples:** retirement contributions, savings, credit union loan payments.
@@ -200,7 +209,7 @@ continue button field: users[i].short_expenses_part_1
 question: |
   Weekly expenses (part 1)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   Include regular household expenses.
 fields:
   - Rent or mortgage (PIT): users[i].short_expense_rent
@@ -242,7 +251,7 @@ continue button field: users[i].short_expenses_part_2
 question: |
   Weekly expenses (part 2)
 subquestion: |
-  Enter amounts using your chosen cadence (${ users[i].financial_cadence_default }).
+  Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   Include transportation and child-related expenses.
 fields:
   - Clothing: users[i].short_expense_clothing
