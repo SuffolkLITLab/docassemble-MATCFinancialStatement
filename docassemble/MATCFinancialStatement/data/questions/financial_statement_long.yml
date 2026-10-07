@@ -314,6 +314,15 @@ fields:
   - Vision insurance: users[i].long_deduction_vision
     datatype: currency
     required: False
+  - How often is the insurance amounts above taken out?: users[i].insurance_deduction_cadence
+    input type: radio
+    code: |
+      cadence_choices
+    default: ${ users[i].financial_cadence_default }
+    help: |
+      Keep your usual pay schedule if the premium comes out of every paycheck.
+      If you pay it on a different schedule, for example monthly, choose that
+      and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].long_deduction_union
     datatype: currency
     required: False
@@ -356,9 +365,9 @@ code: |
     + to_weekly(value("users[i].long_deduction_state"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_fica"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_medicare"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_medical"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_dental"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].long_deduction_vision"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].long_deduction_medical"), fs_insurance_cadence(users[i]))
+    + to_weekly(value("users[i].long_deduction_dental"), fs_insurance_cadence(users[i]))
+    + to_weekly(value("users[i].long_deduction_vision"), fs_insurance_cadence(users[i]))
     + to_weekly(value("users[i].long_deduction_union"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_child_support"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].long_deduction_spousal_support"), users[i].financial_cadence_default)

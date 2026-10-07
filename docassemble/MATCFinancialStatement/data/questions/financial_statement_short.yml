@@ -95,6 +95,15 @@ fields:
   - Medical insurance: users[i].short_deduction_medical
     datatype: currency
     required: False
+  - How often is the insurance amount above taken out?: users[i].insurance_deduction_cadence
+    input type: radio
+    code: |
+      cadence_choices
+    default: ${ users[i].financial_cadence_default }
+    help: |
+      Keep your usual pay schedule if the premium comes out of every paycheck.
+      If you pay it on a different schedule, for example monthly, choose that
+      and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].short_deduction_union
     datatype: currency
     required: False
@@ -104,7 +113,7 @@ code: |
     to_weekly(value("users[i].short_deduction_federal"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].short_deduction_state"), users[i].financial_cadence_default)
     + to_weekly(value("users[i].short_deduction_fica"), users[i].financial_cadence_default)
-    + to_weekly(value("users[i].short_deduction_medical"), users[i].financial_cadence_default)
+    + to_weekly(value("users[i].short_deduction_medical"), fs_insurance_cadence(users[i]))
     + to_weekly(value("users[i].short_deduction_union"), users[i].financial_cadence_default)
   )
 ---

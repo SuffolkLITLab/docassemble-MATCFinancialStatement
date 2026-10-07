@@ -38,6 +38,7 @@ __names__ = [
     "_short_asset_group_items",
     "_short_asset_nth_attr",
     "fs_cadence_label",
+    "fs_insurance_cadence",
     "fs_yes_no_text",
     "fs_vehicle_label",
     "fs_pension_label",
@@ -415,6 +416,14 @@ CADENCE_LABELS = {
 def fs_cadence_label(cadence):
     """The words a user saw for a pay schedule, instead of its stored key."""
     return CADENCE_LABELS.get(str(cadence), str(cadence))
+
+
+def fs_insurance_cadence(user):
+    """Insurance premiums can follow their own schedule; otherwise the usual pay schedule."""
+    for attr in ("insurance_deduction_cadence", "financial_cadence_default"):
+        if hasattr(user, attr):
+            return getattr(user, attr)
+    return "weekly"
 
 
 def fs_yes_no_text(var_name):

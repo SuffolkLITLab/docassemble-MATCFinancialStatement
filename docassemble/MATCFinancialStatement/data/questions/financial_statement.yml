@@ -231,7 +231,7 @@ attachment:
     - "deduction_state": ${ fs_currency_zero(to_weekly(value('users[i].short_deduction_state') if defined('users[i].short_deduction_state') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
     - "deduction_state_exemptions": ${ showifdef('users[i].short_deduction_state_exemptions') }
     - "deduction_fica": ${ fs_currency_zero(to_weekly(value('users[i].short_deduction_fica') if defined('users[i].short_deduction_fica') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
-    - "deduction_medical": ${ fs_currency_zero(to_weekly(value('users[i].short_deduction_medical') if defined('users[i].short_deduction_medical') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
+    - "deduction_medical": ${ fs_currency_zero(to_weekly(value('users[i].short_deduction_medical') if defined('users[i].short_deduction_medical') else 0, fs_insurance_cadence(users[i]))) }
     - "deduction_union": ${ fs_currency_zero(to_weekly(value('users[i].short_deduction_union') if defined('users[i].short_deduction_union') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
     - "deduction_total": ${ fs_currency_zero(value('users[i].short_deductions_total_weekly') if defined('users[i].short_deductions_total_weekly') else None) }
     # Section 4: Adjusted Net Weekly Income
@@ -431,9 +431,9 @@ attachment:
     - "deduction_state_allowances": ${ showifdef('users[i].long_state_allowances') }
     - "deduction_fica": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_fica') if defined('users[i].long_deduction_fica') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
     - "deduction_medicare": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_medicare') if defined('users[i].long_deduction_medicare') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
-    - "deduction_medical": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_medical') if defined('users[i].long_deduction_medical') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
-    - "deduction_dental": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_dental') if defined('users[i].long_deduction_dental') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
-    - "deduction_vision": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_vision') if defined('users[i].long_deduction_vision') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
+    - "deduction_medical": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_medical') if defined('users[i].long_deduction_medical') else 0, fs_insurance_cadence(users[i]))) }
+    - "deduction_dental": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_dental') if defined('users[i].long_deduction_dental') else 0, fs_insurance_cadence(users[i]))) }
+    - "deduction_vision": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_vision') if defined('users[i].long_deduction_vision') else 0, fs_insurance_cadence(users[i]))) }
     - "deduction_union": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_union') if defined('users[i].long_deduction_union') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
     - "deduction_child_support": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_child_support') if defined('users[i].long_deduction_child_support') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
     - "deduction_spousal_support": ${ fs_currency_zero(to_weekly(value('users[i].long_deduction_spousal_support') if defined('users[i].long_deduction_spousal_support') else 0, value('users[i].financial_cadence_default') if defined('users[i].financial_cadence_default') else 'weekly')) }
