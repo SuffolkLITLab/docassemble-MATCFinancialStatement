@@ -839,6 +839,8 @@ subquestion: |
   Fill this out only if you are completing the notarization right now.
 
   If the statement will be notarized later, leave this page blank for now.
+  You will need to sign the printed statement in front of a notary.
+  [Find a notary public](https://www.mass.gov/info-details/find-a-notary-public)
 fields:
   - Will you have this notarized now?: users[i].will_notarize_now
     datatype: yesno
