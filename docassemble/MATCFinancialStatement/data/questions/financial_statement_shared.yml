@@ -599,7 +599,7 @@ fields:
     field: users[i].has_health_insurance
     datatype: yesno
   - Name of health insurance provider: users[i].health_insurance_provider
-    input type: combobox
+    input type: datalist
     choices:
       - MassHealth
       - Medicare
