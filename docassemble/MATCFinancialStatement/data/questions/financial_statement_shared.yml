@@ -81,21 +81,21 @@ data: !!omap
 ---
 variable name: fs_income_checkbox_terms
 data: !!omap
-  - wages: "I receive salary or wages"
-  - overtime: "I receive overtime pay"
-  - part_time: "I receive income from a part-time job"
-  - tips: "I receive tips"
-  - commissions: "I receive commissions or bonuses"
-  - dividends: "I receive dividends or interest"
-  - trusts: "I receive income from trusts or annuities"
-  - pensions: "I receive pensions or retirement funds"
-  - social_security: "I receive Social Security"
-  - disability: "I receive disability, unemployment, or worker's compensation"
-  - public_assistance: "I receive public assistance (TAFDC, SNAP, etc.)"
-  - support_received: "I receive child support or alimony"
-  - royalties: "I receive royalties or payments for other rights"
-  - household_contrib: "I receive contributions from household members"
-  - other: "I receive other income"
+  - wages: "I get salary or wages"
+  - overtime: "I get overtime pay"
+  - part_time: "I get income from a part-time job"
+  - tips: "I get tips"
+  - commissions: "I get commissions or bonuses"
+  - dividends: "I get dividends or interest"
+  - trusts: "I get income from trusts or annuities"
+  - pensions: "I get pensions or retirement funds"
+  - social_security: "I get Social Security"
+  - disability: "I get disability, unemployment, or worker's compensation"
+  - public_assistance: "I get public assistance (TAFDC, SNAP, etc.)"
+  - support_received: "I get child support or alimony"
+  - royalties: "I get royalties or payments for other rights"
+  - household_contrib: "I get contributions from household members"
+  - other: "I get other income"
 ---
 variable name: fs_expense_terms
 data: !!omap
@@ -466,9 +466,9 @@ question: |
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Give contact details where ${ bold(users[i].familiar(unique_names=users)) } can reliably receive court notices.
+  Give contact details where ${ bold(users[i].familiar(unique_names=users)) } can reliably get court notices.
   % else:
-  Give contact details where you can reliably receive court notices.
+  Give contact details where you can reliably get court notices.
   % endif
 
   Email and phone are optional, but it helps to include the best contact
@@ -477,7 +477,7 @@ fields:
   - Phone number: users[i].phone_number
     required: False
     help: |
-      Use a number where you can receive calls or texts. We will format a
+      Use a number where you can get calls or texts. We will format a
       10-digit number as XXX-XXX-XXXX.
   - Email address: users[i].email
     required: False
@@ -664,9 +664,9 @@ question: |
   % endif
 subquestion: |
   % if users.number_gathered() > 1:
-  Choose all income sources ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } receives.
+  Choose all income sources ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } gets.
   % else:
-  Choose all income sources you receive.
+  Choose all income sources you get.
   % endif
   The amount and frequency are entered on the next screen.
   If a category is missing, choose "Other income."
@@ -706,9 +706,9 @@ subquestion: |
   % endif
 
   % if users.number_gathered() > 1:
-  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } receives $300 monthly, enter 300 and choose "Monthly."
+  **Example:** If ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) } gets $300 monthly, enter 300 and choose "Monthly."
   % else:
-  **Example:** If you receive $300 monthly, enter 300 and choose "Monthly."
+  **Example:** If you get $300 monthly, enter 300 and choose "Monthly."
   % endif
 
   ${ collapse_template(fs_amount_entry_help) }
@@ -732,7 +732,7 @@ fields:
     field: x[i].use_default_cadence
     datatype: yesno
     default: True
-  - How often do you receive this income?: x[i].times_per_year
+  - How often do you get this income?: x[i].times_per_year
     input type: radio
     code: |
       times_per_year_list
