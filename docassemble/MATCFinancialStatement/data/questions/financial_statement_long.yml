@@ -218,6 +218,7 @@ fields:
     required: False
   - Amount: users[i].long_expense_list[j].value
     datatype: currency
+    min: 0
   - How often do you pay this amount?: users[i].long_expense_list[j].times_per_year
     input type: radio
     code: |
@@ -287,6 +288,7 @@ subquestion: |
 fields:
   - Federal tax withholding/estimated payments: users[i].long_deduction_federal
     datatype: currency
+    min: 0
     required: False
   - Federal withholding allowances claimed: users[i].long_federal_allowances
     datatype: integer
@@ -294,6 +296,7 @@ fields:
     min: 0
   - State tax withholding/estimated payments: users[i].long_deduction_state
     datatype: currency
+    min: 0
     required: False
   - State withholding allowances claimed: users[i].long_state_allowances
     datatype: integer
@@ -301,18 +304,23 @@ fields:
     min: 0
   - F.I.C.A.: users[i].long_deduction_fica
     datatype: currency
+    min: 0
     required: False
   - Medicare: users[i].long_deduction_medicare
     datatype: currency
+    min: 0
     required: False
   - Medical insurance: users[i].long_deduction_medical
     datatype: currency
+    min: 0
     required: False
   - Dental insurance: users[i].long_deduction_dental
     datatype: currency
+    min: 0
     required: False
   - Vision insurance: users[i].long_deduction_vision
     datatype: currency
+    min: 0
     required: False
   - How often is the insurance amounts above taken out?: users[i].insurance_deduction_cadence
     input type: radio
@@ -325,38 +333,49 @@ fields:
       and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].long_deduction_union
     datatype: currency
+    min: 0
     required: False
   - Child support: users[i].long_deduction_child_support
     datatype: currency
+    min: 0
     required: False
   - Spousal support: users[i].long_deduction_spousal_support
     datatype: currency
+    min: 0
     required: False
   - Retirement: users[i].long_deduction_retirement
     datatype: currency
+    min: 0
     required: False
   - Savings: users[i].long_deduction_savings
     datatype: currency
+    min: 0
     required: False
   - Deferred compensation: users[i].long_deduction_deferred_comp
     datatype: currency
+    min: 0
     required: False
   - Credit union (loan): users[i].long_deduction_credit_union_loan
     datatype: currency
+    min: 0
     required: False
   - Credit union (savings): users[i].long_deduction_credit_union_savings
     datatype: currency
+    min: 0
     required: False
   - Charitable contributions: users[i].long_deduction_charity
     datatype: currency
+    min: 0
     required: False
   - Life insurance: users[i].long_deduction_life_insurance
     datatype: currency
+    min: 0
     required: False
   - Other (specify): users[i].long_deduction_other_description
     required: False
   - Other amount: users[i].long_deduction_other_amount
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -415,6 +434,7 @@ subquestion: |
 fields:
   - Gross income from prior year: users[i].prior_year_gross_amount
     datatype: currency
+    min: 0
     required: False
   - Number of years paid into Social Security: users[i].years_paid_into_social_security
     datatype: integer
@@ -434,39 +454,51 @@ subquestion: |
 fields:
   - Rent: users[i].long_expense_rent
     datatype: currency
+    min: 0
     required: False
   - Mortgage (principal, interest, taxes, insurance if escrowed): users[i].long_expense_mortgage
     datatype: currency
+    min: 0
     required: False
   - Property taxes and assessments: users[i].long_expense_property_tax
     datatype: currency
+    min: 0
     required: False
   - Homeowner/tenant insurance: users[i].long_expense_home_insurance
     datatype: currency
+    min: 0
     required: False
   - Maintenance fees or condo fees: users[i].long_expense_maintenance_fees
     datatype: currency
+    min: 0
     required: False
   - Heat: users[i].long_expense_heat
     datatype: currency
+    min: 0
     required: False
   - Electricity: users[i].long_expense_electric
     datatype: currency
+    min: 0
     required: False
   - Propane or natural gas: users[i].long_expense_gas
     datatype: currency
+    min: 0
     required: False
   - Telephone: users[i].long_expense_phone
     datatype: currency
+    min: 0
     required: False
   - Water/sewer: users[i].long_expense_water
     datatype: currency
+    min: 0
     required: False
   - Food: users[i].long_expense_food
     datatype: currency
+    min: 0
     required: False
   - House supplies: users[i].long_expense_supplies
     datatype: currency
+    min: 0
     required: False
 ---
 id: long_expenses_part_2
@@ -482,54 +514,71 @@ subquestion: |
 fields:
   - Laundry: users[i].long_expense_laundry
     datatype: currency
+    min: 0
     required: False
   - Dry cleaning: users[i].long_expense_dry_cleaning
     datatype: currency
+    min: 0
     required: False
   - Clothing: users[i].long_expense_clothing
     datatype: currency
+    min: 0
     required: False
   - Life insurance: users[i].long_expense_life_insurance
     datatype: currency
+    min: 0
     required: False
   - Medical insurance: users[i].long_expense_medical_insurance
     datatype: currency
+    min: 0
     required: False
   - Dental insurance: users[i].long_expense_dental_insurance
     datatype: currency
+    min: 0
     required: False
   - Vision insurance: users[i].long_expense_vision_insurance
     datatype: currency
+    min: 0
     required: False
   - Uninsured medical: users[i].long_expense_uninsured_medical
     datatype: currency
+    min: 0
     required: False
   - Uninsured dental: users[i].long_expense_uninsured_dental
     datatype: currency
+    min: 0
     required: False
   - Motor vehicle expenses: users[i].long_expense_motor_vehicle
     datatype: currency
+    min: 0
     required: False
   - Fuel: users[i].long_expense_fuel
     datatype: currency
+    min: 0
     required: False
   - Motor vehicle insurance: users[i].long_expense_vehicle_insurance
     datatype: currency
+    min: 0
     required: False
   - Motor vehicle maintenance: users[i].long_expense_vehicle_maintenance
     datatype: currency
+    min: 0
     required: False
   - Loan payment(s): users[i].long_expense_loan_payments
     datatype: currency
+    min: 0
     required: False
   - Entertainment: users[i].long_expense_entertainment
     datatype: currency
+    min: 0
     required: False
   - Vacation: users[i].long_expense_vacation
     datatype: currency
+    min: 0
     required: False
   - Cable TV: users[i].long_expense_cable
     datatype: currency
+    min: 0
     required: False
 ---
 id: long_expenses_part_3
@@ -545,46 +594,59 @@ subquestion: |
 fields:
   - Child support (attach order if from different court): users[i].long_expense_child_support
     datatype: currency
+    min: 0
     required: False
   - Child(ren)'s day care expense: users[i].long_expense_child_day_care
     datatype: currency
+    min: 0
     required: False
   - Child(ren)'s education: users[i].long_expense_child_education
     datatype: currency
+    min: 0
     required: False
   - Education (self): users[i].long_expense_education_self
     datatype: currency
+    min: 0
     required: False
   - Employment-related uniforms: users[i].long_expense_uniforms
     datatype: currency
+    min: 0
     required: False
   - Employment-related travel: users[i].long_expense_employment_travel
     datatype: currency
+    min: 0
     required: False
   - Employment continuing education: users[i].long_expense_continuing_education
     datatype: currency
+    min: 0
     required: False
   - Employment expenses (other): users[i].long_expense_employment_other_description
     required: False
   - Employment expenses (other amount): users[i].long_expense_employment_other_amount
     datatype: currency
+    min: 0
     required: False
   - Lottery tickets: users[i].long_expense_lottery
     datatype: currency
+    min: 0
     required: False
   - Charitable contributions: users[i].long_expense_charity
     datatype: currency
+    min: 0
     required: False
   - Child(ren)'s allowance: users[i].long_expense_child_allowance
     datatype: currency
+    min: 0
     required: False
   - Extraordinary travel for visitation: users[i].long_expense_visitation_travel
     datatype: currency
+    min: 0
     required: False
   - Other (specify): users[i].long_expense_other_description
     required: False
   - Other amount: users[i].long_expense_other_amount
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -637,15 +699,19 @@ subquestion: |
 fields:
   - Retainer amount(s) paid to your attorney(s): users[i].long_counsel_retainer
     datatype: currency
+    min: 0
     required: False
   - Legal fees incurred so far against retainer(s): users[i].long_counsel_fees_incurred
     datatype: currency
+    min: 0
     required: False
   - Anticipated total legal expense (minimum): users[i].long_counsel_range_min
     datatype: currency
+    min: 0
     required: False
   - Anticipated total legal expense (maximum): users[i].long_counsel_range_max
     datatype: currency
+    min: 0
     required: False
 ---
 id: long_real_estate_primary
@@ -676,21 +742,27 @@ fields:
     required: False
   - Purchase price: users[i].long_primary_real_estate_purchase_price
     datatype: currency
+    min: 0
     required: False
   - Year of purchase: users[i].long_primary_real_estate_purchase_year
     datatype: integer
     required: False
   - Current assessed value: users[i].long_primary_real_estate_assessed_value
     datatype: currency
+    min: 0
     required: False
   - Date of last assessment: users[i].long_primary_real_estate_assessment_date
     datatype: date
     required: False
   - Fair market value: users[i].long_primary_real_estate_fmv
+    help: |
+      ${ fs_fmv_help.content }
     datatype: currency
+    min: 0
     required: False
   - Outstanding 1st mortgage: users[i].long_primary_real_estate_first_mortgage
     datatype: currency
+    min: 0
     required: False
   - Outstanding 2nd mortgage or home equity loan: users[i].long_primary_real_estate_second_mortgage
     datatype: currency
@@ -726,21 +798,27 @@ fields:
     required: False
   - Purchase price: users[i].long_secondary_real_estate_purchase_price
     datatype: currency
+    min: 0
     required: False
   - Year of purchase: users[i].long_secondary_real_estate_purchase_year
     datatype: integer
     required: False
   - Current assessed value: users[i].long_secondary_real_estate_assessed_value
     datatype: currency
+    min: 0
     required: False
   - Date of last assessment: users[i].long_secondary_real_estate_assessment_date
     datatype: date
     required: False
   - Fair market value: users[i].long_secondary_real_estate_fmv
+    help: |
+      ${ fs_fmv_help.content }
     datatype: currency
+    min: 0
     required: False
   - Outstanding 1st mortgage: users[i].long_secondary_real_estate_first_mortgage
     datatype: currency
+    min: 0
     required: False
   - Outstanding 2nd mortgage or home equity loan: users[i].long_secondary_real_estate_second_mortgage
     datatype: currency

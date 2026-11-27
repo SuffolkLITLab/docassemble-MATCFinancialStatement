@@ -279,6 +279,25 @@ content: |
 
   A good-faith estimate is usually better than leaving an answer blank.
 ---
+template: fs_fmv_help
+subject: |
+  Fair market value
+content: |
+  **Fair market value** is what the item would sell for today between a
+  willing buyer and a willing seller. It is usually much less than what you
+  paid.
+
+  - **Home or land:** look at recent sale prices of similar homes nearby, or
+    ask a real estate agent. The city's tax assessment is a starting point, but
+    it is often different from the sale price.
+  - **Car:** use a used-car guide's *private party* value, not the dealer
+    price.
+  - **Household items:** use what similar used items sell for, for example at
+    a thrift store or online.
+
+  If you aren't sure, give your best estimate
+  ([IRS Publication 561](https://www.irs.gov/publications/p561)).
+---
 id: gross_annual_income
 question: |
   Gross annual income
@@ -721,6 +740,7 @@ fields:
     required: False
   - Amount: x[i].value
     datatype: currency
+    min: 0
   - label: |
       % if users.number_gathered() > 1:
       Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
@@ -850,6 +870,7 @@ fields:
     required: False
   - Amount: x[i].value
     datatype: currency
+    min: 0
   - label: |
       % if users.number_gathered() > 1:
       Use ${ bold(financial_statement_list_user(x).familiar(unique_names=users)) }'s usual pay schedule (${ fs_cadence_label(financial_statement_list_user(x).financial_cadence_default) })
@@ -943,6 +964,8 @@ sets:
 question: |
   Gross income (part 1)
 subquestion: |
+  **Gross income** is your income before taxes and other deductions are taken out.
+
   Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
@@ -951,24 +974,31 @@ subquestion: |
 fields:
   - Base pay from salary or wages: users[i].income_base_pay_amount
     datatype: currency
+    min: 0
     required: False
   - Overtime: users[i].income_overtime_amount
     datatype: currency
+    min: 0
     required: False
   - Part-time job: users[i].income_part_time_amount
     datatype: currency
+    min: 0
     required: False
   - Tips: users[i].income_tips_amount
     datatype: currency
+    min: 0
     required: False
   - Commissions and bonuses: users[i].income_commissions_amount
     datatype: currency
+    min: 0
     required: False
   - Dividends and interest: users[i].income_dividends_amount
     datatype: currency
+    min: 0
     required: False
   - Trusts and annuities: users[i].income_trusts_amount
     datatype: currency
+    min: 0
     required: False
   - Do you have self-employment or business income?: users[i].has_self_employment_income
     datatype: yesno
@@ -980,6 +1010,8 @@ sets:
 question: |
   Gross income (part 2)
 subquestion: |
+  **Gross income** is your income before taxes and other deductions are taken out.
+
   Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
@@ -988,26 +1020,33 @@ subquestion: |
 fields:
   - Pensions and retirement funds: users[i].income_pensions_amount
     datatype: currency
+    min: 0
     required: False
   - Social Security: users[i].income_social_security_amount
     datatype: currency
+    min: 0
     required: False
   - Disability, unemployment, or worker's compensation: users[i].income_disability_amount
     datatype: currency
+    min: 0
     required: False
   - Public assistance (TAFDC, SNAP, etc.): users[i].income_public_assistance_amount
     datatype: currency
+    min: 0
     required: False
   - Child support or alimony received: users[i].income_support_received_amount
     datatype: currency
+    min: 0
     required: False
   - Do you have rental income from property?: users[i].has_rental_income
     datatype: yesno
   - Royalties and other rights: users[i].income_royalties_amount
     datatype: currency
+    min: 0
     required: False
   - Contributions from household members: users[i].income_household_contrib_amount
     datatype: currency
+    min: 0
     required: False
 ---
 id: income_part_3
@@ -1017,6 +1056,8 @@ sets:
 question: |
   Gross income (part 3)
 subquestion: |
+  **Gross income** is your income before taxes and other deductions are taken out.
+
   Enter each amount for one pay period on your usual pay schedule: **${ fs_cadence_label(users[i].financial_cadence_default) }**.
   To use a different schedule, go back to the pay schedule question.
   Leave a line blank only if it truly does not apply.
@@ -1027,6 +1068,7 @@ fields:
     required: False
   - Other income amount: users[i].income_other_amount
     datatype: currency
+    min: 0
     required: False
 ---
 id: income_totals
@@ -1727,15 +1769,20 @@ fields:
     required: False
   - Purchase price: users[i].motor_vehicles[j].purchase_price
     datatype: currency
+    min: 0
     required: False
   - Year of purchase: users[i].motor_vehicles[j].purchase_year
     datatype: integer
     required: False
   - Fair market value: users[i].motor_vehicles[j].fair_market_value
+    help: |
+      ${ fs_fmv_help.content }
     datatype: currency
+    min: 0
     required: False
   - Outstanding loan: users[i].motor_vehicles[j].outstanding_loan
     datatype: currency
+    min: 0
     required: False
   - Equity: users[i].motor_vehicles[j].equity
     datatype: currency
@@ -1837,9 +1884,11 @@ fields:
     required: False
   - Defined benefit plan amount: users[i].pensions[j].defined_benefit_amount
     datatype: currency
+    min: 0
     required: False
   - Defined contribution plan amount: users[i].pensions[j].defined_contribution_amount
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -1939,6 +1988,7 @@ fields:
     required: False
   - Current balance/value: users[i].other_assets[j].current_balance
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -2034,9 +2084,11 @@ fields:
     required: False
   - Total amount owed: users[i].liabilities[j].amount_due
     datatype: currency
+    min: 0
     required: False
   - Weekly payment: users[i].liabilities[j].weekly_payment
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
