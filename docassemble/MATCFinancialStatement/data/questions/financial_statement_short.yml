@@ -77,6 +77,7 @@ subquestion: |
 fields:
   - Federal income tax deductions: users[i].short_deduction_federal
     datatype: currency
+    min: 0
     required: False
   - Number of federal exemptions: users[i].short_deduction_federal_exemptions
     datatype: integer
@@ -84,6 +85,7 @@ fields:
     min: 0
   - State income tax deductions: users[i].short_deduction_state
     datatype: currency
+    min: 0
     required: False
   - Number of state exemptions: users[i].short_deduction_state_exemptions
     datatype: integer
@@ -91,9 +93,11 @@ fields:
     min: 0
   - F.I.C.A. and Medicare: users[i].short_deduction_fica
     datatype: currency
+    min: 0
     required: False
   - Medical insurance: users[i].short_deduction_medical
     datatype: currency
+    min: 0
     required: False
   - How often is the insurance amount above taken out?: users[i].insurance_deduction_cadence
     input type: radio
@@ -106,6 +110,7 @@ fields:
       and enter the amount you pay each time. We convert it to a weekly amount.
   - Union dues: users[i].short_deduction_union
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -144,17 +149,21 @@ subquestion: |
 fields:
   - Credit union loan repayment: users[i].short_other_deduction_credit_union_loan
     datatype: currency
+    min: 0
     required: False
   - Savings: users[i].short_other_deduction_savings
     datatype: currency
+    min: 0
     required: False
   - Retirement: users[i].short_other_deduction_retirement
     datatype: currency
+    min: 0
     required: False
   - Other (specify): users[i].short_other_deduction_other_description
     required: False
   - Other amount: users[i].short_other_deduction_other_amount
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -195,6 +204,7 @@ subquestion: |
 fields:
   - Gross yearly income from prior year: users[i].prior_year_gross_amount
     datatype: currency
+    min: 0
     required: False
   - Number of years paid into Social Security: users[i].years_paid_into_social_security
     datatype: integer
@@ -214,33 +224,43 @@ subquestion: |
 fields:
   - Rent or mortgage (PIT): users[i].short_expense_rent
     datatype: currency
+    min: 0
     required: False
   - Homeowners or tenant insurance: users[i].short_expense_home_insurance
     datatype: currency
+    min: 0
     required: False
   - Maintenance and repair: users[i].short_expense_maintenance
     datatype: currency
+    min: 0
     required: False
   - Heat: users[i].short_expense_heat
     datatype: currency
+    min: 0
     required: False
   - Electricity or gas: users[i].short_expense_electric
     datatype: currency
+    min: 0
     required: False
   - Telephone: users[i].short_expense_phone
     datatype: currency
+    min: 0
     required: False
   - Water and sewer: users[i].short_expense_water
     datatype: currency
+    min: 0
     required: False
   - Food: users[i].short_expense_food
     datatype: currency
+    min: 0
     required: False
   - House supplies: users[i].short_expense_supplies
     datatype: currency
+    min: 0
     required: False
   - Laundry and cleaning: users[i].short_expense_laundry
     datatype: currency
+    min: 0
     required: False
 ---
 id: short_expenses_part_2
@@ -256,32 +276,41 @@ subquestion: |
 fields:
   - Clothing: users[i].short_expense_clothing
     datatype: currency
+    min: 0
     required: False
   - Life insurance: users[i].short_expense_life_insurance
     datatype: currency
+    min: 0
     required: False
   - Medical insurance: users[i].short_expense_medical_insurance
     datatype: currency
+    min: 0
     required: False
   - Uninsured medicals: users[i].short_expense_uninsured_medical
     datatype: currency
+    min: 0
     required: False
   - Incidentals and toiletries: users[i].short_expense_incidentals
     datatype: currency
+    min: 0
     required: False
   - Motor vehicle expenses: users[i].short_expense_motor_vehicle
     datatype: currency
+    min: 0
     required: False
   - Motor vehicle payment: users[i].short_expense_motor_vehicle_payment
     datatype: currency
+    min: 0
     required: False
   - Child care: users[i].short_expense_child_care
     datatype: currency
+    min: 0
     required: False
   - Other (explain): users[i].short_expense_other_description
     required: False
   - Other amount: users[i].short_expense_other_amount
     datatype: currency
+    min: 0
     required: False
 ---
 code: |
@@ -334,15 +363,19 @@ subquestion: |
 fields:
   - Retainer amount(s) paid to your attorney(s): users[i].short_counsel_retainer
     datatype: currency
+    min: 0
     required: False
   - Legal fees incurred so far against retainer(s): users[i].short_counsel_fees_incurred
     datatype: currency
+    min: 0
     required: False
   - Anticipated total legal expense (minimum): users[i].short_counsel_range_min
     datatype: currency
+    min: 0
     required: False
   - Anticipated total legal expense (maximum): users[i].short_counsel_range_max
     datatype: currency
+    min: 0
     required: False
 ---
 id: short_assets_real_estate
@@ -367,19 +400,25 @@ fields:
   - Title held in the name of: users[i].short_real_estate_title
     required: False
   - Fair market value: users[i].short_real_estate_fmv
+    help: |
+      ${ fs_fmv_help.content }
     datatype: currency
+    min: 0
     required: False
   - Mortgage amount: users[i].short_real_estate_mortgage
     datatype: currency
+    min: 0
     required: False
   - Equity: users[i].short_real_estate_equity
     datatype: currency
     required: False
   - Annuity value: users[i].short_annuity_value
     datatype: currency
+    min: 0
     required: False
   - Life insurance cash surrender value: users[i].short_life_insurance_cash_value
     datatype: currency
+    min: 0
     required: False
 ---
 code: |

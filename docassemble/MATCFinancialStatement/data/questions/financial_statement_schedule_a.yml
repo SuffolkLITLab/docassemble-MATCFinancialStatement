@@ -95,6 +95,7 @@ subquestion: |
 fields:
   - Gross monthly receipts: users[i].schedule_a_gross_monthly_receipts
     datatype: currency
+    min: 0
     required: False
     help: |
       Enter total monthly receipts before expenses.
@@ -132,6 +133,7 @@ fields:
     required: False
   - Monthly amount: users[i].schedule_a_expenses[j].value
     datatype: currency
+    min: 0
     required: False
     help: |
       Enter the total amount you pay in a typical month for this category.
@@ -457,7 +459,9 @@ subquestion: |
 fields:
   - Gross receipts this year so far: users[i].schedule_a_gross_receipts_ytd
     datatype: currency
+    min: 0
     required: False
   - Gross expenses this year so far: users[i].schedule_a_gross_expenses_ytd
     datatype: currency
+    min: 0
     required: False

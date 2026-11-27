@@ -75,6 +75,7 @@ subquestion: |
 fields:
   - Annual rent: users[i].schedule_b_annual_rent_received
     datatype: currency
+    min: 0
     required: False
     help: |
       Enter the total rent you get in a typical year before expenses.
@@ -112,6 +113,7 @@ fields:
     required: False
   - Annual amount: users[i].schedule_b_expenses[j].value
     datatype: currency
+    min: 0
     required: False
     help: |
       Enter the total amount you pay in a typical year for this category.
